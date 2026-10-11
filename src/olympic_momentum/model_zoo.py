@@ -17,7 +17,7 @@ from itertools import product
 
 import numpy as np
 import pandas as pd
-from sklearn.base import clone
+from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.impute import SimpleImputer
@@ -80,6 +80,47 @@ def classifier_grid(forest: ForestParams) -> dict[str, object]:
     }
 
 
+class NaiveBayesRidgeHurdle(BaseEstimator, RegressorMixin):
+    """The paper's best design: Gaussian Naive Bayes decides medal / no medal,
+    then Ridge regression (trained on medal-winning rows only) predicts how many.
+
+    ``target="momentum"`` swaps the Ridge stage to our momentum target
+    (log-change versus the previous Games). Inputs are the raw feature frame
+    and raw medal counts.
+    """
+
+    def __init__(self, alpha: float = 1.0, target: str = "level"):
+        self.alpha = alpha
+        self.target = target
+
+    def _encode(self, X: pd.DataFrame, y: np.ndarray) -> np.ndarray:
+        if self.target == "momentum":
+            return np.log1p(y) - np.log1p(X["Previous_Medals"].to_numpy(dtype=float))
+        return y
+
+    def _decode(self, X: pd.DataFrame, raw: np.ndarray) -> np.ndarray:
+        if self.target == "momentum":
+            raw = np.expm1(np.log1p(X["Previous_Medals"].to_numpy(dtype=float)) + raw)
+        return np.clip(raw, 0.0, None)
+
+    def fit(self, X: pd.DataFrame, y) -> "NaiveBayesRidgeHurdle":
+        X = X[list(FEATURES)]
+        y = np.asarray(y, dtype=float)
+        won = y > 0
+        self.classifier_ = make_pipeline(preprocessor(), GaussianNB()).fit(X, won)
+        self.regressor_ = make_pipeline(preprocessor(), Ridge(alpha=self.alpha)).fit(
+            X[won], self._encode(X[won], y[won]))
+        return self
+
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
+        X = X[list(FEATURES)]
+        wins = self.classifier_.predict(X).astype(bool)
+        return np.where(wins, self._decode(X, self.regressor_.predict(X)), 0.0)
+
+
+PAPER_BEST = "Paper best: Naive Bayes + Ridge"
+
+
 def _games(df: pd.DataFrame, start: int, end: int) -> pd.DataFrame:
     return df.loc[df["Year"].between(start, end)]
 
@@ -112,6 +153,19 @@ def compare_regressors(df: pd.DataFrame, config: ExperimentConfig, forest: Fores
             rows.append({"model": name, "target": "Momentum" if target == "momentum" else "Count",
                          "validation_MAE": best_mae, "params": best_params,
                          **regression_metrics(test[TARGET], model.predict(test))})
+
+    # The paper's best two-stage pairing, with its count target and with ours.
+    for target in ("level", "momentum"):
+        best_alpha, best_mae = None, np.inf
+        for alpha in (0.1, 1.0, 10.0, 100.0):
+            model = NaiveBayesRidgeHurdle(alpha, target).fit(tune_train, tune_train[TARGET])
+            mae = regression_metrics(valid[TARGET], model.predict(valid))["MAE"]
+            if mae < best_mae:
+                best_alpha, best_mae = alpha, mae
+        model = NaiveBayesRidgeHurdle(best_alpha, target).fit(final_train, final_train[TARGET])
+        rows.append({"model": PAPER_BEST, "target": "Momentum" if target == "momentum" else "Count",
+                     "validation_MAE": best_mae, "params": {"alpha": best_alpha},
+                     **regression_metrics(test[TARGET], model.predict(test))})
     return pd.DataFrame(rows)
 
 

@@ -304,6 +304,24 @@
       "RMSE": 3.2996,
       "R2": 0.9358,
       "Top10_MAE": 9.7233
+    },
+    {
+      "model": "Paper best: Naive Bayes + Ridge",
+      "target": "Count",
+      "validation_MAE": 2.2785,
+      "MAE": 2.1213,
+      "RMSE": 4.714,
+      "R2": 0.869,
+      "Top10_MAE": 11.0522
+    },
+    {
+      "model": "Paper best: Naive Bayes + Ridge",
+      "target": "Momentum",
+      "validation_MAE": 1.3135,
+      "MAE": 1.3356,
+      "RMSE": 3.3779,
+      "R2": 0.9327,
+      "Top10_MAE": 9.5547
     }
   ],
   "classifiers": [

@@ -131,3 +131,14 @@ def test_every_model_fits_and_predicts_non_negative(table, world_bank, spec):
 def test_regression_metrics_perfect_prediction():
     metrics = regression_metrics([1, 2, 3], [1, 2, 3], top_k=2)
     assert metrics["MAE"] == 0 and metrics["RMSE"] == 0 and metrics["R2"] == 1
+
+
+@pytest.mark.parametrize("target", ["level", "momentum"])
+def test_paper_best_hurdle_predicts_zero_or_positive(table, world_bank, target):
+    from olympic_momentum.model_zoo import NaiveBayesRidgeHurdle
+
+    features = add_economic_features(build_temporal_features(table), world_bank)
+    model = NaiveBayesRidgeHurdle(alpha=1.0, target=target).fit(features, features["Total_Medals"])
+    predictions = model.predict(features)
+    assert predictions.shape == (len(features),)
+    assert (predictions >= 0).all()

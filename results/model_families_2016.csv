@@ -10,3 +10,5 @@ SVR (RBF kernel),Count,1.4783,1.3156,2.8645,0.9516,6.0188
 SVR (RBF kernel),Momentum,1.3948,1.5805,3.7866,0.9155,10.8052
 Random Forest,Count,1.4424,1.4805,3.6885,0.9198,11.2409
 Random Forest,Momentum,1.246,1.3086,3.2996,0.9358,9.7233
+Paper best: Naive Bayes + Ridge,Count,2.2785,2.1213,4.714,0.869,11.0522
+Paper best: Naive Bayes + Ridge,Momentum,1.3135,1.3356,3.3779,0.9327,9.5547
