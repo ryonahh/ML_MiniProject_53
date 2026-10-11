@@ -1,0 +1,11 @@
+# Raw Kaggle data is downloaded automatically (see data/README.md)
+data/raw/*.csv
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+.DS_Store
+.vscode/
+.idea/

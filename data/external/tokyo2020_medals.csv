@@ -1,0 +1,95 @@
+# Tokyo 2020 Summer Olympics medal table (Wikipedia, '2020 Summer Olympics medal table').
+# Country names follow noc_regions.csv; ROC->Russia, Great Britain->UK, Hong Kong merged into China (as in noc_regions.csv).
+Country,Gold,Silver,Bronze,Total
+USA,39,41,33,113
+China,39,34,22,95
+Japan,27,14,17,58
+UK,22,20,22,64
+Russia,20,28,23,71
+Australia,17,7,22,46
+Netherlands,10,12,14,36
+France,10,12,11,33
+Germany,10,11,16,37
+Italy,10,10,20,40
+Canada,7,7,10,24
+Brazil,7,6,8,21
+New Zealand,7,6,7,20
+Cuba,7,3,5,15
+Hungary,6,7,7,20
+South Korea,6,4,10,20
+Poland,4,5,5,14
+Czech Republic,4,4,3,11
+Kenya,4,4,2,10
+Norway,4,2,2,8
+Jamaica,4,1,4,9
+Spain,3,8,6,17
+Sweden,3,6,0,9
+Switzerland,3,4,6,13
+Denmark,3,4,4,11
+Croatia,3,3,3,9
+Iran,3,2,2,7
+Serbia,3,1,4,8
+Belgium,3,1,3,7
+Bulgaria,3,1,2,6
+Slovenia,3,1,1,5
+Uzbekistan,3,0,2,5
+Georgia,2,5,1,8
+Taiwan,2,4,6,12
+Turkey,2,2,9,13
+Greece,2,1,1,4
+Uganda,2,1,1,4
+Ecuador,2,1,0,3
+Ireland,2,0,2,4
+Israel,2,0,2,4
+Qatar,2,0,1,3
+Bahamas,2,0,0,2
+Kosovo,2,0,0,2
+Ukraine,1,6,12,19
+Belarus,1,3,3,7
+Romania,1,3,0,4
+Venezuela,1,3,0,4
+India,1,2,4,7
+Philippines,1,2,1,4
+Slovakia,1,2,1,4
+South Africa,1,2,0,3
+Austria,1,1,5,7
+Egypt,1,1,4,6
+Indonesia,1,1,3,5
+Ethiopia,1,1,2,4
+Portugal,1,1,2,4
+Tunisia,1,1,0,2
+Estonia,1,0,1,2
+Fiji,1,0,1,2
+Latvia,1,0,1,2
+Thailand,1,0,1,2
+Bermuda,1,0,0,1
+Morocco,1,0,0,1
+Puerto Rico,1,0,0,1
+Colombia,0,4,1,5
+Azerbaijan,0,3,4,7
+Dominican Republic,0,3,2,5
+Armenia,0,2,2,4
+Kyrgyzstan,0,2,1,3
+Mongolia,0,1,3,4
+Argentina,0,1,2,3
+San Marino,0,1,2,3
+Jordan,0,1,1,2
+Malaysia,0,1,1,2
+Nigeria,0,1,1,2
+Bahrain,0,1,0,1
+Lithuania,0,1,0,1
+Namibia,0,1,0,1
+Macedonia,0,1,0,1
+Saudi Arabia,0,1,0,1
+Turkmenistan,0,1,0,1
+Kazakhstan,0,0,8,8
+Mexico,0,0,4,4
+Finland,0,0,2,2
+Botswana,0,0,1,1
+Burkina Faso,0,0,1,1
+Ghana,0,0,1,1
+Grenada,0,0,1,1
+Ivory Coast,0,0,1,1
+Kuwait,0,0,1,1
+Moldova,0,0,1,1
+Syria,0,0,1,1
