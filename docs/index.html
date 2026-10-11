@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Olympic Medal Momentum</title>
 <meta name="description" content="Forecasting Olympic medal tables by learning each country's momentum. UE24CS352A Machine Learning mini-project, Team 53.">
 <link rel="stylesheet" href="assets/style.css">
@@ -10,41 +10,81 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
+<!-- Icon sprite: simple stroke icons used across the page -->
+<svg width="0" height="0" class="sprite" aria-hidden="true">
+  <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l-3 2"/><path d="M3 12H1M5 5 3.6 3.6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><path d="M8 2l2.5 7M16 2l-2.5 7"/><circle cx="12" cy="15" r="6"/><path d="M12 12.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.5"/></symbol>
+</svg>
+
 <header class="top">
-  <div class="wrap top__inner">
-    <span class="brand">Medal Momentum</span>
+  <div class="top__inner">
+    <a class="brand" href="#main" aria-label="Medal Momentum, back to top">
+      <span class="brand__discs" aria-hidden="true"><i></i><i></i><i></i></span>Medal Momentum
+    </a>
     <nav aria-label="Sections">
+      <a href="#predict">Try it</a>
       <a href="#findings">Findings</a>
       <a href="#method">Method</a>
       <a href="#results">Results</a>
       <a href="#explore">Explore</a>
-      <a href="#team">Team</a>
     </nav>
     <button class="theme" type="button" aria-label="Switch colour theme" data-theme-toggle>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
     </button>
   </div>
 </header>
 
 <main id="main">
+  <!-- ============================== HERO ============================== -->
   <section class="hero">
-    <div class="wrap">
-      <p class="hero__course">A UE24CS352A Machine Learning mini-project by Team 53</p>
-      <h1 class="hero__title">Forecasting the medal table from each country’s momentum</h1>
-      <p class="hero__lede">We predict how many Olympic medals a country will win using only earlier Games. The model doesn’t guess the medal count directly. It learns how much a country rises or falls from one Games to the next.</p>
+    <svg class="hero__oval" viewBox="0 0 1200 600" aria-hidden="true">
+      <g fill="none" stroke-width="2">
+        <rect x="80" y="70" width="1040" height="460" rx="230" stroke="var(--o-blue)" opacity=".55"/>
+        <rect x="120" y="110" width="960" height="380" rx="190" stroke="var(--o-yellow)" opacity=".45"/>
+        <rect x="160" y="150" width="880" height="300" rx="150" stroke="var(--o-green)" opacity=".42"/>
+        <rect x="200" y="190" width="800" height="220" rx="110" stroke="var(--o-red)" opacity=".4"/>
+      </g>
+    </svg>
+    <div class="wrap wrap--wide hero__grid">
+      <div class="hero__copy">
+        <p class="hero__course">UE24CS352A Machine Learning mini-project, Team 53</p>
+        <h1 class="hero__title">Forecasting the medal table from each country’s momentum</h1>
+        <p class="hero__lede">Our model predicts how many Olympic medals a country will win using only earlier Games. Instead of guessing the count directly, it learns how much a country rises or falls from one Games to the next.</p>
+        <div class="hero__cta">
+          <a class="btn btn--gold" href="#predict">Try the predictor</a>
+          <a class="btn btn--ghost" href="#results">See the results</a>
+        </div>
+      </div>
+      <ul class="chips" aria-label="Headline results">
+        <li class="chip chip--blue"><b data-k="mae"></b><span>average error per country on Rio 2016</span></li>
+        <li class="chip chip--yellow"><b><span data-k="vsBase"></span>%</b><span>lower error than last Games’ count</span></li>
+        <li class="chip chip--green"><b data-k="winsShort"></b><span>backtest Olympics where momentum won</span></li>
+        <li class="chip chip--red"><b data-k="familiesShort"></b><span>model types improved by momentum</span></li>
+      </ul>
     </div>
 
     <div class="wrap wrap--wide">
       <div class="race" id="race">
         <div class="race__bar">
+          <div>
+            <h2 class="race__title">The medal race</h2>
+            <p class="race__note" id="race-note"></p>
+          </div>
           <div class="seg" role="group" aria-label="Choose Games">
             <button type="button" data-games="2020" aria-pressed="true">Tokyo 2020 forecast</button>
             <button type="button" data-games="2016" aria-pressed="false">Rio 2016 test</button>
           </div>
-          <p class="race__note" id="race-note"></p>
         </div>
         <div class="race__track" id="race-track" role="img" aria-label="Lane chart of forecast and actual medals for the top eight countries"></div>
-        <ul class="key" aria-label="Legend">
+        <ul class="key key--dark" aria-label="Legend">
           <li><span class="mk mk--prev"></span>Previous Games</li>
           <li><span class="mk mk--pred"></span>Our forecast</li>
           <li><span class="mk mk--act"></span>Actual result</li>
@@ -53,104 +93,189 @@
     </div>
   </section>
 
-  <section id="findings" class="band">
-    <div class="wrap">
-      <h2>What we found</h2>
-      <div class="findings">
-        <p><strong class="num" data-k="mae"></strong> medals per country is the average error of our model on Rio 2016. That’s <span data-k="vsBase"></span>% lower than using last Games’ count and <span data-k="vsHist"></span>% lower than the same features predicting the count directly.</p>
-        <p><strong class="num" data-k="wins"></strong> backtest Olympics, from Atlanta 1996 to Rio 2016, where predicting momentum beat every model that predicts the count, including the reference paper’s two-stage design.</p>
-        <p><strong class="num" data-k="prob"></strong> of 2,000 bootstrap resamples of Rio 2016 favour our model over predicting the count directly. The 95% interval for the drop in error is <span data-k="ci"></span> medals per country.</p>
+  <!-- ============================== PREDICTOR ============================== -->
+  <section id="predict" class="predict">
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--yellow"><svg><use href="#i-target"/></svg></span>
+        <div>
+          <h2>Try the model</h2>
+          <p class="intro">This is our real Momentum Target forest (100 trees, trained on 1964–2016) running in your browser. Pick a country to load its record before Tokyo 2020, then move the sliders to see how the forecast changes.</p>
+        </div>
+      </div>
+
+      <div class="predictor">
+        <div class="panel panel--inputs">
+          <div class="picker">
+            <label for="p-country">Country</label>
+            <input id="p-country" list="p-country-list" autocomplete="off" spellcheck="false" placeholder="Type a country">
+            <datalist id="p-country-list"></datalist>
+          </div>
+          <div class="quick" id="p-quick" aria-label="Quick picks"></div>
+
+          <fieldset class="sliders">
+            <legend>Last Games</legend>
+            <div class="slider"><label for="p-m1">Medals</label><output for="p-m1" id="o-m1"></output><input type="range" id="p-m1" min="0" max="150" step="1"></div>
+            <div class="slider"><label for="p-g">Gold medals</label><output for="p-g" id="o-g"></output><input type="range" id="p-g" min="0" max="60" step="1"></div>
+            <div class="slider"><label for="p-a1">Team size (athletes)</label><output for="p-a1" id="o-a1"></output><input type="range" id="p-a1" min="1" max="700" step="1"></div>
+            <div class="slider"><label for="p-s">Sports entered</label><output for="p-s" id="o-s"></output><input type="range" id="p-s" min="1" max="40" step="1"></div>
+            <div class="slider"><label for="p-e">Events entered</label><output for="p-e" id="o-e"></output><input type="range" id="p-e" min="1" max="320" step="1"></div>
+          </fieldset>
+          <fieldset class="sliders">
+            <legend>Earlier Games</legend>
+            <div class="slider"><label for="p-m2">Medals two Games ago</label><output for="p-m2" id="o-m2"></output><input type="range" id="p-m2" min="0" max="150" step="1"></div>
+            <div class="slider"><label for="p-a2">Team size two Games ago</label><output for="p-a2" id="o-a2"></output><input type="range" id="p-a2" min="1" max="700" step="1"></div>
+            <div class="slider"><label for="p-m3">Medals three Games ago</label><output for="p-m3" id="o-m3"></output><input type="range" id="p-m3" min="0" max="150" step="1"></div>
+          </fieldset>
+          <button type="button" class="btn btn--line" id="p-reset">Reset to real data</button>
+        </div>
+
+        <div class="panel panel--result" aria-live="polite">
+          <p class="result__label" id="p-title"></p>
+          <div class="result__main">
+            <div class="result__num"><span id="p-result">0</span><small>medals</small></div>
+            <span class="pill" id="p-change"></span>
+          </div>
+          <div class="compare" id="p-compare"></div>
+          <h3 class="board__title">Where that lands in the 2020 forecast</h3>
+          <ol class="board" id="p-board"></ol>
+          <p class="result__foot" id="p-foot"></p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ============================== FINDINGS ============================== -->
+  <section id="findings" class="band">
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--blue"><svg><use href="#i-medal"/></svg></span>
+        <div><h2>What we found</h2></div>
+      </div>
+      <div class="cards">
+        <article class="card card--blue">
+          <b class="num" data-k="mae"></b>
+          <p>medals per country is the average error on Rio 2016. That’s <span data-k="vsBase"></span>% lower than last Games’ count and <span data-k="vsHist"></span>% lower than the same features predicting the count directly.</p>
+        </article>
+        <article class="card card--yellow">
+          <b class="num" data-k="wins"></b>
+          <p>backtest Olympics, Atlanta 1996 to Rio 2016, where predicting momentum beat every model that predicts the count, including the reference paper’s two-stage design.</p>
+        </article>
+        <article class="card card--green">
+          <b class="num" data-k="prob"></b>
+          <p>of 2,000 bootstrap resamples favour our model on Rio 2016. The 95% interval for the drop in error is <span data-k="ci"></span> medals per country.</p>
+        </article>
+        <article class="card card--red">
+          <b class="num" data-k="families"></b>
+          <p>of the paper’s model types get better with a momentum target, including its own best Naive Bayes + Ridge model (<span data-k="nbCount"></span> to <span data-k="nbMom"></span>).</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== METHOD ============================== -->
   <section id="method">
-    <div class="wrap">
-      <h2>How the pipeline works</h2>
-      <p class="intro">Each step uses only information that existed before the Games being predicted. Unit tests check this. For example, changing a future result must never change any past feature.</p>
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--green"><svg><use href="#i-layers"/></svg></span>
+        <div>
+          <h2>How the pipeline works</h2>
+          <p class="intro">Each step uses only information that existed before the Games being predicted. Unit tests check this: changing a future result must never change a past feature.</p>
+        </div>
+      </div>
       <ol class="steps">
-        <li><h3>Clean the records</h3><p>271,116 athlete rows from Kaggle’s <em>120 years of Olympic history</em>. Summer Games only, with team medals counted once per event, as in the official tables.</p></li>
-        <li><h3>One row per country per Games</h3><p>Athletes, sports, events and medals for 206 countries. Historical teams are merged, so West and East Germany count as Germany and the USSR as Russia.</p></li>
-        <li><h3>Look back, never forward</h3><p>Nine lagged features: last Games’ medals and golds, team size, sports, events, medal and athlete growth, a three-Games rolling average, and medals per athlete.</p></li>
-        <li><h3>Add the World Bank</h3><p>The reference paper’s indicators: GDP, GDP per capita, GDP growth, population, population growth, land area, and shares of world GDP and population. Each comes from the year before the Games.</p></li>
-        <li><h3>Learn momentum</h3><p>A Random Forest predicts the change in log medals since the last Games. The forecast is that change added back to last Games’ count.</p></li>
-        <li><h3>Test on the future</h3><p>Tuned on London 2012, tested on Rio 2016, backtested on six Games, then used to forecast Tokyo 2020 and scored against the real medal table.</p></li>
+        <li class="step step--blue"><span class="step__icon"><svg><use href="#i-data"/></svg></span><h3>Clean the records</h3><p>271,116 athlete rows from Kaggle’s <em>120 years of Olympic history</em>. Summer Games only, with team medals counted once per event, as in the official tables.</p></li>
+        <li class="step step--yellow"><span class="step__icon"><svg><use href="#i-table"/></svg></span><h3>One row per country per Games</h3><p>Athletes, sports, events and medals for 206 countries. West and East Germany count as Germany, and the USSR as Russia.</p></li>
+        <li class="step step--ink"><span class="step__icon"><svg><use href="#i-clock"/></svg></span><h3>Look back, never forward</h3><p>Nine lagged features: last Games’ medals and golds, team size, sports, events, medal and athlete growth, a three-Games average, and medals per athlete.</p></li>
+        <li class="step step--green"><span class="step__icon"><svg><use href="#i-globe"/></svg></span><h3>Add the World Bank</h3><p>The reference paper’s indicators: GDP, GDP per capita, growth, population, land area, and shares of world GDP and population, from the year before the Games.</p></li>
+        <li class="step step--red"><span class="step__icon"><svg><use href="#i-trend"/></svg></span><h3>Learn momentum</h3><p>A Random Forest predicts the change in log medals since the last Games. The forecast adds that change back to last Games’ count.</p></li>
+        <li class="step step--blue"><span class="step__icon"><svg><use href="#i-target"/></svg></span><h3>Test on the future</h3><p>Tuned on London 2012, tested on Rio 2016, backtested on six Games, then used to forecast Tokyo 2020 and scored against the real medal table.</p></li>
       </ol>
     </div>
   </section>
 
   <section class="idea band">
-    <div class="wrap">
-      <h2>Why predict the change, not the count</h2>
-      <div class="idea__grid">
-        <div>
-          <p>A Random Forest can only predict values it has already seen, averaged inside its leaves. If it learns medal <em>counts</em>, one leaf has to cover nations with 3 medals and nations with 90, so the big nations get pulled toward the middle.</p>
-          <p>Learning <em>momentum</em> fixes this. A country that sent a bigger team and won more medals per athlete last time tends to grow by a similar percentage, whatever its size. The same leaf can then serve Kenya and China.</p>
-        </div>
-        <figure class="formula">
-          <div class="formula__eq">
-            <span>forecast <span class="op">=</span></span><span>(1 + last Games’ medals) <span class="op">×</span></span><span>e<sup>momentum</sup> <span class="op">−</span> 1</span>
-          </div>
-          <figcaption>The forest is trained on <i>log(1 + medals<sub>t</sub>) − log(1 + medals<sub>t−1</sub>)</i>. All eight models use the same forest settings, so differences in error come from the features and target, not the tuning.</figcaption>
-        </figure>
+    <div class="wrap wrap--wide idea__grid">
+      <div>
+        <h2>Why predict the change, not the count</h2>
+        <p>A Random Forest can only predict values it has already seen, averaged inside its leaves. If it learns medal <em>counts</em>, one leaf has to cover nations with 3 medals and nations with 90, so the big nations get pulled toward the middle.</p>
+        <p>Learning <em>momentum</em> fixes this. A country that sent a bigger team and won more medals per athlete tends to grow by a similar percentage whatever its size, so one leaf can serve Kenya and China.</p>
       </div>
+      <figure class="formula">
+        <div class="formula__eq">
+          <span>forecast <span class="op">=</span></span><span>(1 + last Games’ medals) <span class="op">×</span></span><span>e<sup>momentum</sup> <span class="op">−</span> 1</span>
+        </div>
+        <figcaption>The forest is trained on <i>log(1 + medals<sub>t</sub>) − log(1 + medals<sub>t−1</sub>)</i>. All eight models share the same forest settings, so differences in error come from the features and the target, not the tuning.</figcaption>
+      </figure>
     </div>
   </section>
 
+  <!-- ============================== RESULTS ============================== -->
   <section id="results">
-    <div class="wrap">
-      <h2>How the eight models compare</h2>
-      <p class="intro">Every model uses the same Random Forest (<span id="params"></span>), averaged over <span id="seeds"></span> random seeds. Lower error is better.</p>
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--red"><svg><use href="#i-trend"/></svg></span>
+        <div>
+          <h2>How the eight models compare</h2>
+          <p class="intro">Every model uses the same Random Forest (<span id="params"></span>), averaged over <span id="seeds"></span> random seeds. Lower error is better. Gold is our model, silver the same features predicting the count, bronze the baseline.</p>
+        </div>
+      </div>
     </div>
     <div class="wrap wrap--wide charts">
       <figure class="chart">
-        <figcaption><h3>Rio 2016 held-out test</h3><p>Mean absolute error in medals per country. Bars show ± one standard deviation across seeds.</p></figcaption>
+        <figcaption><h3>Rio 2016 held-out test</h3><p>Mean absolute error in medals per country, ± one standard deviation across seeds.</p></figcaption>
         <div id="bars"></div>
       </figure>
       <figure class="chart">
-        <figcaption><h3>Six Olympics, one at a time</h3><p>Each Games is predicted from all earlier Games only.</p></figcaption>
+        <figcaption><h3>Six Olympics, one at a time</h3><p>Each Games is predicted from all earlier Games only. Click a name to hide its line.</p></figcaption>
         <div id="lines"></div>
         <ul class="key key--lines" id="lines-key"></ul>
       </figure>
     </div>
-    <div class="wrap">
-      <div class="zoo">
+
+    <div class="wrap wrap--wide">
+      <div class="sub">
         <h3>The paper’s models, re-run on our splits</h3>
-        <p>The reference paper compares many model types. We re-ran each one with history and World Bank features, once predicting the count and once predicting momentum. Each was tuned on 2012 and tested once on Rio 2016. Momentum lowers the error for five of the six types that can use it, including the paper’s own best pairing of Naive Bayes and Ridge. Poisson regression needs a count target, so it has no momentum version.</p>
+        <p>We re-ran each model type from the reference paper with history and World Bank features, once predicting the count and once predicting momentum. Each was tuned on 2012 and tested once on Rio 2016. Momentum lowers the error for five of the six types that can use it, including the paper’s own best pairing of Naive Bayes and Ridge. Poisson regression needs a count target, so it has no momentum version.</p>
       </div>
     </div>
     <div class="wrap wrap--wide charts">
       <figure class="chart">
         <figcaption><h3>Regressors: count vs momentum</h3><p>Rio 2016 MAE, medals per country.</p></figcaption>
         <div id="families"></div>
-        <ul class="key"><li><span class="mk" style="background:var(--other)"></span>Predict the count</li><li><span class="mk mk--pred"></span>Predict momentum</li></ul>
+        <ul class="key"><li><span class="mk mk--count"></span>Predict the count</li><li><span class="mk mk--pred"></span>Predict momentum</li></ul>
       </figure>
       <figure class="chart">
-        <figcaption><h3>First stage: will a country win any medal?</h3><p>Accuracy of the paper’s classifiers, against a simple rule.</p></figcaption>
+        <figcaption><h3>First stage: will a country win any medal?</h3><p>Accuracy of the paper’s classifiers against a simple rule.</p></figcaption>
         <div class="tablewrap"><table id="clf-table"></table></div>
       </figure>
     </div>
-    <div class="wrap">
+
+    <div class="wrap wrap--wide">
       <div class="tokyo">
-        <h3>The real future: Tokyo 2020</h3>
-        <p>The dataset stops at 2016, so these forecasts were made without any 2020 information and then scored against the actual medal table. Tokyo was postponed a year by COVID and hosted by Japan. Here the models with World Bank data do best: the paper’s two-stage design has the lowest error, and the economic models are clearly better on the top ten nations. Predicting momentum, our winner on every earlier Games, falls back to the middle of the pack.</p>
+        <div class="tokyo__copy">
+          <h3>The real future: Tokyo 2020</h3>
+          <p>The dataset stops at 2016, so these forecasts were made without any 2020 information and then scored against the actual medal table. Tokyo was postponed a year by COVID and hosted by Japan. Here the models with World Bank data do best: the paper’s two-stage design has the lowest error, and the economic models are clearly better on the top ten nations. Predicting momentum, our winner on every earlier Games, falls back to the middle of the pack.</p>
+        </div>
         <div class="tablewrap"><table id="tokyo-table"></table></div>
       </div>
     </div>
   </section>
 
+  <!-- ============================== EXPLORE ============================== -->
   <section id="explore" class="band">
-    <div class="wrap">
-      <h2>Explore a country</h2>
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--blue"><svg><use href="#i-globe"/></svg></span>
+        <div><h2>Explore a country’s history</h2></div>
+      </div>
       <div class="picker">
         <label for="country">Country</label>
         <input id="country" list="country-list" autocomplete="off" spellcheck="false" placeholder="Type a country">
         <datalist id="country-list"></datalist>
-        <div class="quick" id="quick" aria-label="Quick picks"></div>
       </div>
+      <div class="quick" id="quick" aria-label="Quick picks"></div>
       <p class="story" id="story" aria-live="polite"></p>
-    </div>
-    <div class="wrap wrap--wide">
       <figure class="chart chart--solo">
         <div id="history"></div>
         <ul class="key">
@@ -163,14 +288,18 @@
     </div>
   </section>
 
+  <!-- ============================== HONEST NOTES ============================== -->
   <section class="honest">
-    <div class="wrap">
-      <h2>What didn’t work, and what’s left</h2>
+    <div class="wrap wrap--wide">
+      <div class="head">
+        <span class="badge badge--ink"><svg><use href="#i-alert"/></svg></span>
+        <div><h2>What didn’t work, and what’s left</h2></div>
+      </div>
       <ul class="notes">
-        <li><h3>A momentum score as an extra feature</h3><p>We first combined medal growth, athlete growth and efficiency into one standardised score. Adding it to a forest that already has those three inputs made no difference (MAE <span data-k="scoreMae"></span> vs <span data-k="histMae"></span>). The idea only helped once momentum became the target.</p></li>
-        <li><h3>The paper’s two-stage model</h3><p>The reference paper first predicts medal or no medal, then how many. Rebuilt with its World Bank inputs, it beats the plain count model and wins on Tokyo 2020, but it trails predicting momentum in every backtest Games.</p></li>
-        <li><h3>SVR predicting the count</h3><p>In the model-family comparison, an RBF-kernel SVR predicting the count has the best RMSE and top-ten error on Rio 2016. Momentum did not help SVR. This is a single test year, so we report it but don’t read too much into it.</p></li>
-        <li><h3>World Bank data has gaps</h3><p>The World Bank has no figures for the Soviet Union, East Germany or Taiwan, so <span data-k="ecoMissing"></span> of country-Games rows have no economic data. On Rio 2016 the indicators barely change the error, because last Games’ medals already reflect a country’s wealth and size. They do help on Tokyo 2020 and on the top ten nations.</p></li>
+        <li><h3>A momentum score as an extra feature</h3><p>Combining medal growth, athlete growth and efficiency into one score made no difference (MAE <span data-k="scoreMae"></span> vs <span data-k="histMae"></span>). The forest already has those three inputs. The idea only helped once momentum became the target.</p></li>
+        <li><h3>The paper’s two-stage model</h3><p>Rebuilt with its World Bank inputs, it beats the plain count model and wins on Tokyo 2020, but it trails predicting momentum in every backtest Games.</p></li>
+        <li><h3>SVR predicting the count</h3><p>An RBF-kernel SVR predicting the count has the best RMSE and top-ten error on Rio 2016, and momentum did not help it. This is a single test year, so we report it without reading too much into it.</p></li>
+        <li><h3>World Bank data has gaps</h3><p>There are no figures for the Soviet Union, East Germany or Taiwan, so <span data-k="ecoMissing"></span> of rows lack economic data. On Rio 2016 the indicators barely change the error. They do help on Tokyo 2020 and on the top ten nations.</p></li>
         <li><h3>Shocks the data can’t see</h3><p>Host-nation effects (Japan won 58 medals in Tokyo, up from 41), boycotts and a COVID-delayed Games are outside what any of these features describe.</p></li>
         <li><h3>Feature importance is not cause</h3><p>Last Games’ medals and medals per athlete dominate the importance ranking. That shows what the model relies on, not why countries win.</p></li>
       </ul>
@@ -179,7 +308,7 @@
 </main>
 
 <footer id="team" class="foot">
-  <div class="wrap foot__grid">
+  <div class="wrap wrap--wide foot__grid">
     <div>
       <h2>Team 53</h2>
       <p class="people"><span>Ryona Aditree Ghosh <small>PES1UG24AM233</small></span><span>Rishit V N S <small>PES1UG24AM225</small></span></p>
@@ -191,7 +320,8 @@
         <li><a href="https://github.com/ryonahh/ML_MiniProject_53">Source code on GitHub</a></li>
         <li><a href="https://github.com/ryonahh/ML_MiniProject_53/blob/main/notebooks/Olympic_Medal_Prediction.ipynb">Demo notebook</a></li>
         <li><a href="https://github.com/ryonahh/ML_MiniProject_53/tree/main/deliverables">Report and slides</a></li>
-        <li><a href="https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results">Dataset on Kaggle</a></li>
+        <li><a href="https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results">Olympic dataset on Kaggle</a></li>
+        <li><a href="https://datacatalog.worldbank.org/search/dataset/0037712">World Development Indicators</a></li>
       </ul>
     </div>
   </div>
@@ -199,6 +329,7 @@
 
 <div class="tip" id="tip" role="tooltip" hidden></div>
 <script src="assets/data.js"></script>
+<script src="assets/model.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

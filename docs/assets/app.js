@@ -161,6 +161,21 @@
     }));
 
   /* ---------- findings ---------- */
+  function familyStats() {
+    if (!D.families) return {};
+    const names = [...new Set(D.families.map((r) => r.model))];
+    const pairs = names.map((m) => [D.families.find((r) => r.model === m && r.target === "Count"),
+      D.families.find((r) => r.model === m && r.target === "Momentum")]).filter(([c, mo]) => c && mo);
+    const better = pairs.filter(([c, mo]) => mo.MAE < c.MAE).length;
+    const nb = pairs.find(([c]) => c.model.startsWith("Paper best"));
+    return {
+      families: `${better} of ${pairs.length}`,
+      familiesShort: `${better} of ${pairs.length}`,
+      nbCount: nb ? fmt(nb[0].MAE, 2) : "",
+      nbMom: nb ? fmt(nb[1].MAE, 2) : "",
+    };
+  }
+
   function fillFindings() {
     const by = Object.fromEntries(D.models.map((m) => [m.name, m]));
     const ours = by[PROPOSED], hist = by[REFERENCE], base = by.Baseline;
@@ -183,6 +198,8 @@
       scoreMae: fmt(by["Historical + Momentum Score"].MAE_mean, 3),
       histMae: fmt(hist.MAE_mean, 3),
       ecoMissing: `${fmt(100 * (1 - (D.economicCoverage ?? 1)), 0)}%`,
+      winsShort: `${wins}/${D.backtest.years.length}`,
+      ...familyStats(),
     };
     document.querySelectorAll("[data-k]").forEach((node) => { node.textContent = values[node.dataset.k]; });
     $("#params").textContent =
@@ -448,6 +465,147 @@
     box.setAttribute("aria-label", `${current}: medals by Games from ${years[0]} to ${years[years.length - 1]}`);
   }
 
+  /* ---------- live predictor (our forest, exported from scikit-learn) ---------- */
+  const MODEL = window.MEDAL_MODEL;
+  const SLIDERS = ["m1", "g", "a1", "s", "e", "m2", "a2", "m3"];
+  const pState = { country: "India", inputs: null, edited: false, shown: 0 };
+
+  // Same feature recipe as src/olympic_momentum/features.py.
+  function featureVector(v) {
+    const growth = (a, b) => Math.log1p(a) - Math.log1p(b);
+    return [
+      v.m1, v.g, v.a1, v.s, v.e,
+      growth(v.m1, v.m2), growth(v.a1, v.a2),
+      (v.m1 + v.m2 + v.m3) / 3,
+      v.a1 > 0 ? v.m1 / v.a1 : 0,
+    ];
+  }
+
+  // Walk every tree exactly as scikit-learn does (float32 inputs, x <= threshold goes left).
+  function predictMomentum(x) {
+    const xf = x.map(Math.fround);
+    let sum = 0;
+    for (const t of MODEL.trees) {
+      let n = 0;
+      while (t.f[n] !== -1) n = xf[t.f[n]] <= t.t[n] ? t.l[n] : t.r[n];
+      sum += t.v[n];
+    }
+    return sum / MODEL.trees.length;
+  }
+
+  function forecastFor(v) {
+    const change = predictMomentum(featureVector(v));
+    return { change, medals: Math.max(0, Math.expm1(Math.log1p(v.m1) + change)) };
+  }
+
+  function realInputs(country) {
+    const c = MODEL.countries[country];
+    // A missing earlier Games is treated like "same as the last one": zero growth,
+    // and the rolling average falls back to the medals we have, as in the pipeline.
+    const m2 = c.m[1] ?? c.m[0];
+    const m3 = c.m[2] ?? (c.m[1] !== null && c.m[1] !== undefined ? (c.m[0] + c.m[1]) / 2 : c.m[0]);
+    return { m1: c.m[0], g: c.g, a1: c.a[0], s: c.s, e: c.e, m2, a2: c.a[1] ?? c.a[0], m3 };
+  }
+
+  let baseBoard = null;
+  function forecastBoard() {
+    if (!baseBoard) {
+      baseBoard = Object.keys(MODEL.countries).map((c) => ({ country: c, medals: forecastFor(realInputs(c)).medals }));
+    }
+    return baseBoard;
+  }
+
+  function setupPredictor() {
+    if (!MODEL) { $("#predict").hidden = true; return; }
+    // Small console API, also used by the export check: MedalMomentum.forecast("India")
+    window.MedalMomentum = { forecast: (c) => forecastFor(realInputs(c)), features: (c) => featureVector(realInputs(c)) };
+    const names = Object.keys(MODEL.countries).sort();
+    $("#p-country-list").innerHTML = names.map((c) => `<option value="${c}"></option>`).join("");
+    const quick = $("#p-quick");
+    ["India", "USA", "China", "Japan", "UK", "Kenya", "Brazil", "Australia"].filter((c) => MODEL.countries[c]).forEach((c) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = c;
+      b.addEventListener("click", () => loadCountry(c));
+      quick.appendChild(b);
+    });
+    const input = $("#p-country");
+    const pick = () => {
+      const q = input.value.trim().toLowerCase();
+      const match = names.find((c) => c.toLowerCase() === q) || names.find((c) => c.toLowerCase().startsWith(q));
+      if (match && q) loadCountry(match);
+    };
+    input.addEventListener("change", pick);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") pick(); });
+    SLIDERS.forEach((k) => $(`#p-${k}`).addEventListener("input", (e) => {
+      pState.inputs[k] = Number(e.target.value);
+      if (k === "m1" && pState.inputs.g > pState.inputs.m1) { pState.inputs.g = pState.inputs.m1; $("#p-g").value = pState.inputs.g; }
+      if (k === "g" && pState.inputs.g > pState.inputs.m1) { pState.inputs.m1 = pState.inputs.g; $("#p-m1").value = pState.inputs.m1; }
+      pState.edited = true;
+      renderPrediction();
+    }));
+    $("#p-reset").addEventListener("click", () => loadCountry(pState.country));
+    loadCountry(pState.country);
+  }
+
+  function loadCountry(country) {
+    pState.country = country;
+    pState.inputs = realInputs(country);
+    pState.edited = false;
+    $("#p-country").value = country;
+    document.querySelectorAll("#p-quick button").forEach((b) => b.setAttribute("aria-pressed", String(b.textContent === country)));
+    SLIDERS.forEach((k) => {
+      const el2 = $(`#p-${k}`);
+      el2.max = Math.max(Number(el2.max), Math.ceil(pState.inputs[k]));
+      el2.value = pState.inputs[k];
+    });
+    renderPrediction();
+  }
+
+  function animateNumber(node, from, to) {
+    if (reduceMotion) { node.textContent = fmt(to, 1); return; }
+    const start = performance.now(), dur = 380;
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - k, 3);
+      node.textContent = fmt(from + (to - from) * e, 1);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function renderPrediction() {
+    const v = pState.inputs;
+    SLIDERS.forEach((k) => { $(`#o-${k}`).textContent = Math.round(v[k]); });
+    const { change, medals } = forecastFor(v);
+    animateNumber($("#p-result"), pState.shown, medals);
+    pState.shown = medals;
+
+    $("#p-title").textContent = pState.edited ? `${pState.country}, with your changes` : `${pState.country}, Tokyo 2020 forecast`;
+    const pct = (Math.exp(change) - 1) * 100;
+    const pill = $("#p-change");
+    pill.className = `pill ${pct > 0.5 ? "pill--up" : pct < -0.5 ? "pill--down" : "pill--flat"}`;
+    pill.textContent = `${pct >= 0 ? "+" : "−"}${fmt(Math.abs(pct), 1)}% momentum`;
+
+    const actual = (D.forecast2020.find((r) => r.country === pState.country) || {}).actual;
+    const rows = [["Last Games", v.m1, css("--silver")], ["Our forecast", medals, css("--gold")]];
+    if (actual !== null && actual !== undefined) rows.push(["Actual, Tokyo 2020", actual, css("--o-blue")]);
+    const max = Math.max(...rows.map((r) => r[1]), 1) * 1.08;
+    $("#p-compare").innerHTML = rows.map(([label, value, colour]) =>
+      `<div class="cmp"><span>${label}</span><span class="cmp__bar"><i style="width:${(100 * value / max).toFixed(1)}%;background:${colour}"></i></span><b>${fmt(value, value % 1 ? 1 : 0)}</b></div>`).join("");
+
+    const board = forecastBoard().map((r) => (r.country === pState.country ? { ...r, medals } : r))
+      .sort((a, b) => b.medals - a.medals);
+    const rank = board.findIndex((r) => r.country === pState.country);
+    const from = Math.max(0, Math.min(rank - 2, board.length - 5));
+    const medalColour = [css("--gold"), css("--silver"), css("--bronze")];
+    $("#p-board").innerHTML = board.slice(from, from + 5).map((r, i) => {
+      const pos = from + i;
+      const dot = pos < 3 ? `<span class="medal-dot" style="background:${medalColour[pos]}"></span>` : "";
+      return `<li class="${pos === rank ? "you" : ""}"><span class="rk">${pos + 1}</span><span>${dot}${r.country}</span><span>${fmt(r.medals, 1)}</span></li>`;
+    }).join("");
+
+    $("#p-foot").textContent = `forecast = (1 + ${Math.round(v.m1)}) × e^(${change >= 0 ? "" : "−"}${fmt(Math.abs(change), 3)}) − 1 = ${fmt(medals, 1)} medals. The ranking uses this browser model for all ${board.length} countries.`;
+  }
+
   /* ---------- render ---------- */
   function renderAll(animate = true) {
     if (!animate) raceState.animate = false;
@@ -461,6 +619,7 @@
   fillFindings();
   renderTokyo();
   renderClassifiers();
+  setupPredictor();
   setupPicker();
   selectCountry(current);
   renderAll();

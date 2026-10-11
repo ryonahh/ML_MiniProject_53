@@ -54,13 +54,13 @@ pip install -r requirements.txt
 
 python scripts/run_pipeline.py --quick   # about 30 s: 1 seed, 100 trees, writes to results/quick/
 python scripts/run_pipeline.py           # about 6 min: full run, 5 seeds, 300 trees
-python -m pytest -q                      # 18 tests
+python -m pytest -q                      # 19 tests
 ```
 
 The raw Kaggle CSVs are downloaded automatically on the first run (see `data/README.md`).
 Then open:
 
-* **Website:** `docs/index.html` in any browser. It works offline, and the fonts and data are bundled.
+* **Website:** `docs/index.html` in any browser. It works offline, with the fonts and data bundled. It includes a **live predictor**: our Momentum Target forest (100 trees, trained on 1964–2016), exported to JavaScript by `scripts/export_predictor.py`. It runs in the browser and matches scikit-learn's predictions exactly.
 * **Notebook:** `notebooks/Olympic_Medal_Prediction.ipynb` (`jupyter notebook notebooks/`).
 * **Report and slides:** `deliverables/`.
 
@@ -88,10 +88,12 @@ Then open:
 │   ├── experiment.py    tuning, held-out test, backtest, bootstrap, forecast
 │   ├── model_zoo.py     the paper's regressors and classifiers, count vs momentum
 │   ├── reporting.py     CSV/JSON results and figures
-│   └── site_data.py     exports docs/assets/data.js for the website
+│   ├── site_data.py     exports docs/assets/data.js for the website
+│   └── export_model.py  exports the forest to docs/assets/model.js (live predictor)
 ├── scripts/
 │   ├── run_pipeline.py          runs everything
-│   └── prepare_world_bank.py    extracts the six WDI series from the bulk download
+│   ├── prepare_world_bank.py    extracts the six WDI series from the bulk download
+│   └── export_predictor.py      re-exports the website's live predictor
 ├── tests/test_pipeline.py
 ├── notebooks/Olympic_Medal_Prediction.ipynb
 ├── data/                raw (downloaded), processed, external (World Bank, Tokyo 2020 actuals)
