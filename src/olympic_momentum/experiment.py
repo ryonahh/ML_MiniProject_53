@@ -23,16 +23,18 @@ from .config import (
     TemporalSplit,
 )
 from .data import build_country_year_table
+from .economic import add_economic_features
 from .features import PerformanceMomentum, add_forecast_rows, build_temporal_features
+from .model_zoo import run_model_zoo
 from .models import fit_forecaster, regression_metrics
 
 
 # --------------------------------------------------------------------------- data
 def prepare_dataset(split: TemporalSplit) -> pd.DataFrame:
-    """Country x Year table with temporal features, including empty forecast rows."""
+    """Country x Year table with temporal and World Bank features, plus empty forecast rows."""
     table = build_country_year_table()
     table = add_forecast_rows(table, year=split.forecast_year, from_year=split.test_year)
-    return build_temporal_features(table)
+    return add_economic_features(build_temporal_features(table))
 
 
 def games(df: pd.DataFrame, start: int, end: int) -> pd.DataFrame:
@@ -208,14 +210,14 @@ def run_all(config: ExperimentConfig | None = None, verbose: bool = True) -> dic
     log = print if verbose else (lambda *a, **k: None)
     specs = {spec.name: spec for spec in MODEL_SPECS}
 
-    log("1/6  Building Country x Year dataset ...")
+    log("1/7  Building Country x Year dataset ...")
     df = prepare_dataset(split)
 
-    log("2/6  Tuning shared Random Forest settings on the validation Games ...")
+    log("2/7  Tuning shared Random Forest settings on the validation Games ...")
     params, tuning_grid = tune_forest(df, config)
     log(f"     -> min_samples_leaf={params.min_samples_leaf}, max_features={params.max_features}")
 
-    log(f"3/6  Held-out test on {split.test_year} (train {split.train_start}-{split.validation_year}) ...")
+    log(f"3/7  Held-out test on {split.test_year} (train {split.train_start}-{split.validation_year}) ...")
     test_metrics, test_predictions = evaluate_on_year(
         df, split.test_year, split.train_start, params, config.seeds
     )
@@ -225,20 +227,25 @@ def run_all(config: ExperimentConfig | None = None, verbose: bool = True) -> dic
         test_predictions[REFERENCE_MODEL], config.bootstrap_samples,
     )
 
-    log("4/6  Rolling-origin backtest ...")
+    log("4/7  Rolling-origin backtest ...")
     backtest = rolling_origin(df, config, params)
 
-    log("5/6  Permutation feature importance ...")
+    log("5/7  Permutation feature importance ...")
     importance = feature_importance(df, specs[PROPOSED_MODEL], params, split)
 
-    log(f"6/6  Forecasting {split.forecast_year} ...")
+    log(f"6/7  Forecasting {split.forecast_year} ...")
     future = forecast(df, params, split, config.seeds)
     forecast_scores = None
     actuals = load_actuals()
     if actuals is not None:
         future, forecast_scores = score_forecast(future, actuals)
 
+    log("7/7  Comparing the reference paper's model families ...")
+    zoo = run_model_zoo(df, config, params)
+
     return {
+        "model_families": zoo["regressors"],
+        "classifiers": zoo["classifiers"],
         "forecast_scores": forecast_scores,
         "config": config,
         "params": params,

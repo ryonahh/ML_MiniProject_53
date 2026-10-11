@@ -97,6 +97,17 @@ def build_site_payload(results: dict) -> dict:
             for _, r in future[future["Country"].isin(medal_countries)].iterrows()
         ],
         "history": _country_histories(df, medal_countries),
+        "families": [
+            {"model": r.model, "target": r.target, "MAE": round(float(r.MAE), 4),
+             "RMSE": round(float(r.RMSE), 4), "Top10": round(float(r.Top10_MAE), 4)}
+            for r in results["model_families"].itertuples()
+        ],
+        "classifiers": [
+            {"model": r.model, "acc2012": round(float(r.accuracy_2012), 4), "acc2016": round(float(r.accuracy_2016), 4),
+             "f12016": round(float(r.f1_2016), 4)}
+            for r in results["classifiers"].itertuples()
+        ],
+        "economicCoverage": round(float(df.loc[df["Year"].between(1964, 2016) & df[TARGET].notna(), "Log_GDP"].notna().mean()), 3),
     }
 
 

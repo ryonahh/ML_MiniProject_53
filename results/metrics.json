@@ -53,15 +53,26 @@
       "Top10_MAE_std": 0.3721
     },
     {
+      "model": "Historical + Economic",
+      "MAE_mean": 1.4612,
+      "MAE_std": 0.0181,
+      "RMSE_mean": 3.677,
+      "RMSE_std": 0.0434,
+      "R2_mean": 0.9203,
+      "R2_std": 0.0019,
+      "Top10_MAE_mean": 11.0734,
+      "Top10_MAE_std": 0.2296
+    },
+    {
       "model": "Paper Two-Stage",
-      "MAE_mean": 1.4896,
-      "MAE_std": 0.0183,
-      "RMSE_mean": 3.9243,
-      "RMSE_std": 0.0705,
-      "R2_mean": 0.9092,
-      "R2_std": 0.0033,
-      "Top10_MAE_mean": 12.2903,
-      "Top10_MAE_std": 0.2956
+      "MAE_mean": 1.4417,
+      "MAE_std": 0.0126,
+      "RMSE_mean": 3.7495,
+      "RMSE_std": 0.0415,
+      "R2_mean": 0.9171,
+      "R2_std": 0.0018,
+      "Top10_MAE_mean": 11.336,
+      "Top10_MAE_std": 0.2196
     },
     {
       "model": "Momentum Target",
@@ -84,6 +95,17 @@
       "R2_std": 0.001,
       "Top10_MAE_mean": 10.1606,
       "Top10_MAE_std": 0.1132
+    },
+    {
+      "model": "Momentum Target + Economic",
+      "MAE_mean": 1.3067,
+      "MAE_std": 0.0139,
+      "RMSE_mean": 3.3836,
+      "RMSE_std": 0.0513,
+      "R2_mean": 0.9325,
+      "R2_std": 0.002,
+      "Top10_MAE_mean": 9.8298,
+      "Top10_MAE_std": 0.2696
     }
   ],
   "headline": {
@@ -133,14 +155,24 @@
       "Average": 1.618
     },
     {
+      "model": "Historical + Economic",
+      "1996": 1.8711,
+      "2000": 1.7597,
+      "2004": 1.4681,
+      "2008": 1.7296,
+      "2012": 1.5168,
+      "2016": 1.4612,
+      "Average": 1.6344
+    },
+    {
       "model": "Paper Two-Stage",
-      "1996": 1.8557,
-      "2000": 1.6279,
-      "2004": 1.3756,
-      "2008": 1.6295,
-      "2012": 1.3687,
-      "2016": 1.4896,
-      "Average": 1.5578
+      "1996": 1.8674,
+      "2000": 1.6747,
+      "2004": 1.3212,
+      "2008": 1.6489,
+      "2012": 1.3881,
+      "2016": 1.4417,
+      "Average": 1.557
     },
     {
       "model": "Momentum Target",
@@ -161,6 +193,161 @@
       "2012": 1.244,
       "2016": 1.2964,
       "Average": 1.3886
+    },
+    {
+      "model": "Momentum Target + Economic",
+      "1996": 1.8719,
+      "2000": 1.3162,
+      "2004": 1.115,
+      "2008": 1.4722,
+      "2012": 1.2427,
+      "2016": 1.3067,
+      "Average": 1.3875
+    }
+  ],
+  "model_families_2016": [
+    {
+      "model": "Linear Regression",
+      "target": "Count",
+      "validation_MAE": 2.4289,
+      "MAE": 2.2164,
+      "RMSE": 4.6315,
+      "R2": 0.8735,
+      "Top10_MAE": 10.6949
+    },
+    {
+      "model": "Linear Regression",
+      "target": "Momentum",
+      "validation_MAE": 1.4628,
+      "MAE": 1.378,
+      "RMSE": 3.8343,
+      "R2": 0.9133,
+      "Top10_MAE": 9.4431
+    },
+    {
+      "model": "Ridge",
+      "target": "Count",
+      "validation_MAE": 2.424,
+      "MAE": 2.2006,
+      "RMSE": 4.6174,
+      "R2": 0.8743,
+      "Top10_MAE": 10.6586
+    },
+    {
+      "model": "Ridge",
+      "target": "Momentum",
+      "validation_MAE": 1.4445,
+      "MAE": 1.3494,
+      "RMSE": 3.7753,
+      "R2": 0.916,
+      "Top10_MAE": 8.9375
+    },
+    {
+      "model": "Lasso",
+      "target": "Count",
+      "validation_MAE": 2.4261,
+      "MAE": 2.2062,
+      "RMSE": 4.6158,
+      "R2": 0.8744,
+      "Top10_MAE": 10.63
+    },
+    {
+      "model": "Lasso",
+      "target": "Momentum",
+      "validation_MAE": 1.3291,
+      "MAE": 1.3101,
+      "RMSE": 3.3826,
+      "R2": 0.9325,
+      "Top10_MAE": 9.0171
+    },
+    {
+      "model": "Poisson Regression",
+      "target": "Count",
+      "validation_MAE": 1.7717,
+      "MAE": 1.6607,
+      "RMSE": 4.2146,
+      "R2": 0.8953,
+      "Top10_MAE": 10.6182
+    },
+    {
+      "model": "SVR (RBF kernel)",
+      "target": "Count",
+      "validation_MAE": 1.4783,
+      "MAE": 1.3156,
+      "RMSE": 2.8645,
+      "R2": 0.9516,
+      "Top10_MAE": 6.0188
+    },
+    {
+      "model": "SVR (RBF kernel)",
+      "target": "Momentum",
+      "validation_MAE": 1.3948,
+      "MAE": 1.5805,
+      "RMSE": 3.7866,
+      "R2": 0.9155,
+      "Top10_MAE": 10.8052
+    },
+    {
+      "model": "Random Forest",
+      "target": "Count",
+      "validation_MAE": 1.4424,
+      "MAE": 1.4805,
+      "RMSE": 3.6885,
+      "R2": 0.9198,
+      "Top10_MAE": 11.2409
+    },
+    {
+      "model": "Random Forest",
+      "target": "Momentum",
+      "validation_MAE": 1.246,
+      "MAE": 1.3086,
+      "RMSE": 3.2996,
+      "R2": 0.9358,
+      "Top10_MAE": 9.7233
+    }
+  ],
+  "classifiers": [
+    {
+      "model": "Logistic Regression",
+      "accuracy_2012": 0.8775,
+      "f1_2012": 0.8466,
+      "accuracy_2016": 0.9029,
+      "f1_2016": 0.878
+    },
+    {
+      "model": "SVM (RBF kernel)",
+      "accuracy_2012": 0.8725,
+      "f1_2012": 0.8415,
+      "accuracy_2016": 0.9126,
+      "f1_2016": 0.8889
+    },
+    {
+      "model": "Gaussian Naive Bayes",
+      "accuracy_2012": 0.8676,
+      "f1_2012": 0.8383,
+      "accuracy_2016": 0.9029,
+      "f1_2016": 0.8824
+    },
+    {
+      "model": "Multilayer Perceptron",
+      "accuracy_2012": 0.8627,
+      "f1_2012": 0.8313,
+      "accuracy_2016": 0.8932,
+      "f1_2016": 0.8675
+    },
+    {
+      "model": "Random Forest",
+      "accuracy_2012": 0.8922,
+      "f1_2012": 0.8625,
+      "accuracy_2016": 0.9126,
+      "f1_2016": 0.8889
+    },
+    {
+      "model": "Rule: medalled last Games",
+      "accuracy_2012": 0.8725,
+      "f1_2012": 0.8471,
+      "accuracy_2016": 0.8883,
+      "f1_2016": 0.8639
     }
   ],
   "tokyo_2020": [
@@ -186,11 +373,18 @@
       "Top10_MAE": 11.3514
     },
     {
+      "model": "Historical + Economic",
+      "MAE": 1.5381,
+      "RMSE": 3.0987,
+      "R2": 0.9524,
+      "Top10_MAE": 9.541
+    },
+    {
       "model": "Paper Two-Stage",
-      "MAE": 1.5521,
-      "RMSE": 3.3992,
-      "R2": 0.9427,
-      "Top10_MAE": 11.5807
+      "MAE": 1.506,
+      "RMSE": 3.1173,
+      "R2": 0.9518,
+      "Top10_MAE": 9.7532
     },
     {
       "model": "Momentum Target",
@@ -205,6 +399,13 @@
       "RMSE": 3.7297,
       "R2": 0.931,
       "Top10_MAE": 12.4516
+    },
+    {
+      "model": "Momentum Target + Economic",
+      "MAE": 1.5959,
+      "RMSE": 3.6018,
+      "R2": 0.9357,
+      "Top10_MAE": 11.631
     }
   ]
 }

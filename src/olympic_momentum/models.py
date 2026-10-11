@@ -54,6 +54,8 @@ class MedalForecaster(BaseEstimator, RegressorMixin):
     """Feature pipeline + learner + target formulation for one :class:`ModelSpec`.
 
     Inputs are the full feature frame (``X`` must contain ``Previous_Medals``).
+    ``estimator`` optionally replaces the Random Forest with any regressor
+    (it should include its own preprocessing, e.g. imputation and scaling).
 
     * ``target="level"``    -> the learner predicts ``Total_Medals`` directly.
     * ``target="momentum"`` -> the learner predicts
@@ -65,9 +67,10 @@ class MedalForecaster(BaseEstimator, RegressorMixin):
     3-medal and a 90-medal nation with the same trajectory.
     """
 
-    def __init__(self, spec: ModelSpec, params: ForestParams | None = None):
+    def __init__(self, spec: ModelSpec, params: ForestParams | None = None, estimator=None):
         self.spec = spec
         self.params = params
+        self.estimator = estimator
 
     def _build_pipeline(self) -> Pipeline:
         params = self.params or ForestParams()
@@ -75,7 +78,10 @@ class MedalForecaster(BaseEstimator, RegressorMixin):
         if MOMENTUM_SCORE in self.spec.features:
             steps.append(("momentum", PerformanceMomentum()))
         steps.append(("select", ColumnSelector(self.spec.features)))
-        if self.spec.learner == "two_stage":
+        if self.estimator is not None:
+            # Any scikit-learn regressor (used by the model-family comparison).
+            steps.append(("model", clone(self.estimator)))
+        elif self.spec.learner == "two_stage":
             steps.append(("model", TwoStageRegressor(params)))
         else:
             steps.append(("model", RandomForestRegressor(**params.as_dict())))

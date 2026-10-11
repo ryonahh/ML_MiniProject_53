@@ -108,6 +108,26 @@ def plot_importance(importance: pd.DataFrame, path: Path) -> None:
     plt.close(fig)
 
 
+def plot_model_families(families: pd.DataFrame, path: Path) -> None:
+    """Paired bars: each model family predicting the count vs predicting momentum."""
+    table = families.pivot_table(index="model", columns="target", values="MAE", sort=False)
+    fig, ax = plt.subplots(figsize=(7.2, 3.2))
+    y = np.arange(len(table))[::-1]
+    ax.barh(y + 0.19, table["Count"], height=0.36, color=GREY, label="Predict the count")
+    if "Momentum" in table:
+        ax.barh(y - 0.19, table["Momentum"], height=0.36, color=GOLD, label="Predict momentum (proposed)")
+    for yi, (count, mom) in zip(y, table[["Count", "Momentum"]].to_numpy()):
+        ax.text(count + 0.03, yi + 0.19, f"{count:.2f}", va="center", fontsize=8, color=INK)
+        if not np.isnan(mom):
+            ax.text(mom + 0.03, yi - 0.19, f"{mom:.2f}", va="center", fontsize=8, color=INK)
+    ax.set_yticks(y, table.index)
+    ax.set_xlabel("MAE on Rio 2016 (history + World Bank features)")
+    ax.grid(axis="y", visible=False)
+    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    fig.savefig(path)
+    plt.close(fig)
+
+
 # ------------------------------------------------------------------------- save
 def save_results(results: dict, results_dir: Path = RESULTS_DIR) -> dict:
     """Write CSV tables, metrics.json and figures. Returns the JSON summary."""
@@ -157,6 +177,13 @@ def save_results(results: dict, results_dir: Path = RESULTS_DIR) -> dict:
         "significance_2016": {k: round(v, 4) for k, v in results["significance"].items()},
         "rolling_origin_mae": backtest.round(4).reset_index().to_dict(orient="records"),
     }
+    families = results["model_families"]
+    families.drop(columns="params").round(4).to_csv(results_dir / "model_families_2016.csv", index=False)
+    results["classifiers"].round(4).to_csv(results_dir / "classifiers.csv", index=False)
+    plot_model_families(families, figures / "model_families.png")
+    payload["model_families_2016"] = families.drop(columns="params").round(4).to_dict(orient="records")
+    payload["classifiers"] = results["classifiers"].round(4).to_dict(orient="records")
+
     scores = results.get("forecast_scores")
     if scores is not None:
         scores.round(4).to_csv(results_dir / "tokyo_2020_metrics.csv")

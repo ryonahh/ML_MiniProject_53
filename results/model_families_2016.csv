@@ -1,0 +1,12 @@
+model,target,validation_MAE,MAE,RMSE,R2,Top10_MAE
+Linear Regression,Count,2.4289,2.2164,4.6315,0.8735,10.6949
+Linear Regression,Momentum,1.4628,1.378,3.8343,0.9133,9.4431
+Ridge,Count,2.424,2.2006,4.6174,0.8743,10.6586
+Ridge,Momentum,1.4445,1.3494,3.7753,0.916,8.9375
+Lasso,Count,2.4261,2.2062,4.6158,0.8744,10.63
+Lasso,Momentum,1.3291,1.3101,3.3826,0.9325,9.0171
+Poisson Regression,Count,1.7717,1.6607,4.2146,0.8953,10.6182
+SVR (RBF kernel),Count,1.4783,1.3156,2.8645,0.9516,6.0188
+SVR (RBF kernel),Momentum,1.3948,1.5805,3.7866,0.9155,10.8052
+Random Forest,Count,1.4424,1.4805,3.6885,0.9198,11.2409
+Random Forest,Momentum,1.246,1.3086,3.2996,0.9358,9.7233

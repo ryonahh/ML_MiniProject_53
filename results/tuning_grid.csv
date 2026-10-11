@@ -2,48 +2,64 @@ min_samples_leaf,max_features,model,validation_MAE
 1,0.6,Baseline,1.649
 1,0.6,Historical Features,1.4623
 1,0.6,Historical + Momentum Score,1.4866
-1,0.6,Paper Two-Stage,1.4248
+1,0.6,Historical + Economic,1.444
+1,0.6,Paper Two-Stage,1.3981
 1,0.6,Momentum Target,1.2706
 1,0.6,Momentum Target + Score,1.3076
+1,0.6,Momentum Target + Economic,1.2484
 1,1.0,Baseline,1.6364
 1,1.0,Historical Features,1.5065
 1,1.0,Historical + Momentum Score,1.5182
-1,1.0,Paper Two-Stage,1.4832
+1,1.0,Historical + Economic,1.5817
+1,1.0,Paper Two-Stage,1.4781
 1,1.0,Momentum Target,1.3234
 1,1.0,Momentum Target + Score,1.3221
+1,1.0,Momentum Target + Economic,1.3052
 3,0.6,Baseline,1.3762
 3,0.6,Historical Features,1.4353
 3,0.6,Historical + Momentum Score,1.4479
-3,0.6,Paper Two-Stage,1.4451
+3,0.6,Historical + Economic,1.4678
+3,0.6,Paper Two-Stage,1.4028
 3,0.6,Momentum Target,1.282
 3,0.6,Momentum Target + Score,1.2847
+3,0.6,Momentum Target + Economic,1.2712
 3,1.0,Baseline,1.4829
 3,1.0,Historical Features,1.5042
 3,1.0,Historical + Momentum Score,1.5174
-3,1.0,Paper Two-Stage,1.5239
+3,1.0,Historical + Economic,1.5958
+3,1.0,Paper Two-Stage,1.51
 3,1.0,Momentum Target,1.332
 3,1.0,Momentum Target + Score,1.3262
+3,1.0,Momentum Target + Economic,1.2508
 5,0.6,Baseline,1.3121
 5,0.6,Historical Features,1.4278
 5,0.6,Historical + Momentum Score,1.4308
-5,0.6,Paper Two-Stage,1.4048
+5,0.6,Historical + Economic,1.4704
+5,0.6,Paper Two-Stage,1.4323
 5,0.6,Momentum Target,1.2457
 5,0.6,Momentum Target + Score,1.2501
+5,0.6,Momentum Target + Economic,1.247
 5,1.0,Baseline,1.4303
 5,1.0,Historical Features,1.4816
 5,1.0,Historical + Momentum Score,1.4899
-5,1.0,Paper Two-Stage,1.4881
+5,1.0,Historical + Economic,1.6247
+5,1.0,Paper Two-Stage,1.4981
 5,1.0,Momentum Target,1.2956
 5,1.0,Momentum Target + Score,1.2859
+5,1.0,Momentum Target + Economic,1.2657
 10,0.6,Baseline,1.245
 10,0.6,Historical Features,1.4106
 10,0.6,Historical + Momentum Score,1.4138
-10,0.6,Paper Two-Stage,1.3884
+10,0.6,Historical + Economic,1.4424
+10,0.6,Paper Two-Stage,1.3752
 10,0.6,Momentum Target,1.2353
 10,0.6,Momentum Target + Score,1.2486
+10,0.6,Momentum Target + Economic,1.246
 10,1.0,Baseline,1.3906
 10,1.0,Historical Features,1.4759
 10,1.0,Historical + Momentum Score,1.4995
-10,1.0,Paper Two-Stage,1.46
+10,1.0,Historical + Economic,1.6299
+10,1.0,Paper Two-Stage,1.4487
 10,1.0,Momentum Target,1.2662
 10,1.0,Momentum Target + Score,1.2779
+10,1.0,Momentum Target + Economic,1.273

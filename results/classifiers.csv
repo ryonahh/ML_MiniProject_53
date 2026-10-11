@@ -1,0 +1,7 @@
+model,accuracy_2012,f1_2012,accuracy_2016,f1_2016
+Logistic Regression,0.8775,0.8466,0.9029,0.878
+SVM (RBF kernel),0.8725,0.8415,0.9126,0.8889
+Gaussian Naive Bayes,0.8676,0.8383,0.9029,0.8824
+Multilayer Perceptron,0.8627,0.8313,0.8932,0.8675
+Random Forest,0.8922,0.8625,0.9126,0.8889
+Rule: medalled last Games,0.8725,0.8471,0.8883,0.8639
