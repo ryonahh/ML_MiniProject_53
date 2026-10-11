@@ -36,6 +36,7 @@ Rio 2016 held-out test, trained on 1964–2012. All eight models share one Rando
 * A momentum-target model has the **lowest error in all 6 backtest Games** (1996–2016).
 * **The paper's model families, re-run** (history + World Bank features, Rio 2016 MAE, count → momentum):
   Linear 2.22 → 1.38, Ridge 2.20 → 1.35, Lasso 2.21 → 1.31, Random Forest 1.48 → 1.31. Poisson is count-only (1.66).
+  The paper's best pairing (Naive Bayes classifier + Ridge) improves from 2.12 to 1.34.
   SVR is the exception (1.32 → 1.58). The medal / no-medal classifiers reach 86–89% on 2012, which matches the paper's 85.5–89.1%.
 * **Honest negatives:** the momentum *score* as a feature does not help, and World Bank data barely changes the 2016 error.
   On the real **Tokyo 2020** Games (forecast from data up to 2016) the World Bank models do best
@@ -53,7 +54,7 @@ pip install -r requirements.txt
 
 python scripts/run_pipeline.py --quick   # about 30 s: 1 seed, 100 trees, writes to results/quick/
 python scripts/run_pipeline.py           # about 6 min: full run, 5 seeds, 300 trees
-python -m pytest -q                      # 16 tests
+python -m pytest -q                      # 18 tests
 ```
 
 The raw Kaggle CSVs are downloaded automatically on the first run (see `data/README.md`).
@@ -73,7 +74,7 @@ Then open:
    * *Score:* the mean of the z-scored medal growth, athlete growth and efficiency. It is a sklearn transformer fitted on training rows only.
    * *Target (proposed):* the forest learns `log(1+medals_t) − log(1+medals_{t−1})`, and the forecast is `(1+medals_{t−1})·e^pred − 1`.
 6. **Evaluation.** One Random Forest setting for all eight models is chosen on the 2012 validation Games. We then test on 2016 (5 seeds), run a rolling-origin backtest on 1996–2016, run a paired bootstrap, and forecast Tokyo 2020.
-7. **The paper's model families.** Linear, Ridge, Lasso, Poisson, SVR and Random Forest regressors, each with both targets, plus the Logistic, SVM, Naive Bayes, MLP and Random Forest medal / no-medal classifiers. Each is tuned on 2012 and tested on 2016 (`model_zoo.py`).
+7. **The paper's model families.** Linear, Ridge, Lasso, Poisson, SVR and Random Forest regressors, each with both targets, the paper's best two-stage pairing (Naive Bayes + Ridge), and the Logistic, SVM, Naive Bayes, MLP and Random Forest medal / no-medal classifiers. Each is tuned on 2012 and tested on 2016 (`model_zoo.py`).
 
 ## Repository layout
 

@@ -292,7 +292,7 @@
     const get = (m, t) => D.families.find((r) => r.model === m && r.target === t);
     const W = Math.max(box.clientWidth, 300);
     const narrow = W < 460;
-    const labelW = narrow ? 0 : 150, group = narrow ? 64 : 46, top = 4, bottom = 26;
+    const labelW = narrow ? 0 : 200, group = narrow ? 64 : 46, top = 4, bottom = 26;
     const H = top + names.length * group + bottom;
     const svg = svgFor(box, W, H);
     const max = niceMax(Math.max(...D.families.map((r) => r.MAE)) * 1.08, 0.5);
