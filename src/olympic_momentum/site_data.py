@@ -75,7 +75,7 @@ def build_site_payload(results: dict) -> dict:
                 for k in ("MAE_mean", "MAE_std", "RMSE_mean", "R2_mean", "Top10_MAE_mean")}}
             for spec in MODEL_SPECS
         ],
-        "significance": results["significance"],
+        "significance": {k: round(float(v), 4) for k, v in results["significance"].items()},
         "backtest": {"years": years,
                      "series": {m: _round(backtest.loc[m, years], 4) for m in model_names},
                      "average": {m: round(float(backtest.loc[m, "Average"]), 4) for m in model_names}},
