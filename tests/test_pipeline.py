@@ -142,3 +142,16 @@ def test_paper_best_hurdle_predicts_zero_or_positive(table, world_bank, target):
     predictions = model.predict(features)
     assert predictions.shape == (len(features),)
     assert (predictions >= 0).all()
+
+
+def test_exported_forest_matches_scikit_learn(table):
+    from sklearn.ensemble import RandomForestRegressor
+
+    from olympic_momentum.config import HISTORICAL_FEATURES
+    from olympic_momentum.export_model import _tree_arrays, predict_from_export
+
+    features = build_temporal_features(table)
+    X = features[HISTORICAL_FEATURES].to_numpy(dtype=float)
+    forest = RandomForestRegressor(n_estimators=5, random_state=0).fit(X, features["Total_Medals"])
+    payload = {"trees": [_tree_arrays(t) for t in forest.estimators_]}
+    np.testing.assert_allclose(predict_from_export(payload, X), forest.predict(X), atol=1e-5)
