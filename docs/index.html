@@ -47,10 +47,16 @@
   <section class="hero">
     <svg class="hero__oval" viewBox="0 0 1200 600" aria-hidden="true">
       <g fill="none" stroke-width="2">
-        <rect x="80" y="70" width="1040" height="460" rx="230" stroke="var(--o-blue)" opacity=".55"/>
-        <rect x="120" y="110" width="960" height="380" rx="190" stroke="var(--o-yellow)" opacity=".45"/>
-        <rect x="160" y="150" width="880" height="300" rx="150" stroke="var(--o-green)" opacity=".42"/>
-        <rect x="200" y="190" width="800" height="220" rx="110" stroke="var(--o-red)" opacity=".4"/>
+        <path id="lane0" d="M310,70 H890 A230,230 0 0 1 890,530 H310 A230,230 0 0 1 310,70 Z" stroke="var(--o-blue)" opacity="0.55"/>
+        <path id="lane1" d="M310,110 H890 A190,190 0 0 1 890,490 H310 A190,190 0 0 1 310,110 Z" stroke="var(--o-yellow)" opacity="0.45"/>
+        <path id="lane2" d="M310,150 H890 A150,150 0 0 1 890,450 H310 A150,150 0 0 1 310,150 Z" stroke="var(--o-green)" opacity="0.42"/>
+        <path id="lane3" d="M310,190 H890 A110,110 0 0 1 890,410 H310 A110,110 0 0 1 310,190 Z" stroke="var(--o-red)" opacity="0.4"/>
+      </g>
+      <g>
+        <circle r="7" fill="var(--o-blue)" class="runner"><animateMotion dur="9s" repeatCount="indefinite" begin="0.0s"><mpath href="#lane0"/></animateMotion></circle>
+        <circle r="7" fill="var(--o-yellow)" class="runner"><animateMotion dur="11s" repeatCount="indefinite" begin="-2.3s"><mpath href="#lane1"/></animateMotion></circle>
+        <circle r="7" fill="var(--o-green)" class="runner"><animateMotion dur="13s" repeatCount="indefinite" begin="-4.6s"><mpath href="#lane2"/></animateMotion></circle>
+        <circle r="7" fill="var(--o-red)" class="runner"><animateMotion dur="15s" repeatCount="indefinite" begin="-6.9s"><mpath href="#lane3"/></animateMotion></circle>
       </g>
     </svg>
     <div class="wrap wrap--wide hero__grid">
@@ -96,7 +102,7 @@
   <!-- ============================== PREDICTOR ============================== -->
   <section id="predict" class="predict">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="Live">
         <span class="badge badge--yellow"><svg><use href="#i-target"/></svg></span>
         <div>
           <h2>Try the model</h2>
@@ -137,7 +143,10 @@
             <span class="pill" id="p-change"></span>
           </div>
           <div class="compare" id="p-compare"></div>
-          <h3 class="board__title">Where that lands in the 2020 forecast</h3>
+          <h3 class="board__title">The 2020 forecast podium</h3>
+          <div class="podium" id="p-podium"></div>
+          <div class="ranktrack" id="p-rank"></div>
+          <h3 class="board__title">Where that lands in the table</h3>
           <ol class="board" id="p-board"></ol>
           <p class="result__foot" id="p-foot"></p>
         </div>
@@ -146,9 +155,10 @@
   </section>
 
   <!-- ============================== FINDINGS ============================== -->
-  <section id="findings" class="band">
+  <div class="lanes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <section id="findings" class="findings">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="Found">
         <span class="badge badge--blue"><svg><use href="#i-medal"/></svg></span>
         <div><h2>What we found</h2></div>
       </div>
@@ -176,7 +186,7 @@
   <!-- ============================== METHOD ============================== -->
   <section id="method">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="Method">
         <span class="badge badge--green"><svg><use href="#i-layers"/></svg></span>
         <div>
           <h2>How the pipeline works</h2>
@@ -211,9 +221,10 @@
   </section>
 
   <!-- ============================== RESULTS ============================== -->
+  <div class="lanes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
   <section id="results">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="Compare">
         <span class="badge badge--red"><svg><use href="#i-trend"/></svg></span>
         <div>
           <h2>How the eight models compare</h2>
@@ -265,7 +276,7 @@
   <!-- ============================== EXPLORE ============================== -->
   <section id="explore" class="band">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="History">
         <span class="badge badge--blue"><svg><use href="#i-globe"/></svg></span>
         <div><h2>Explore a country’s history</h2></div>
       </div>
@@ -291,7 +302,7 @@
   <!-- ============================== HONEST NOTES ============================== -->
   <section class="honest">
     <div class="wrap wrap--wide">
-      <div class="head">
+      <div class="head" data-bg="Honest">
         <span class="badge badge--ink"><svg><use href="#i-alert"/></svg></span>
         <div><h2>What didn’t work, and what’s left</h2></div>
       </div>
@@ -305,6 +316,7 @@
       </ul>
     </div>
   </section>
+<div class="lanes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 </main>
 
 <footer id="team" class="foot">

@@ -28,7 +28,52 @@
 
   function svgFor(container, width, height) {
     container.replaceChildren();
-    return el("svg", { viewBox: `0 0 ${width} ${height}`, width, height, role: "presentation" }, container);
+    const svg = el("svg", { viewBox: `0 0 ${width} ${height}`, width, height, role: "presentation" }, container);
+    el("defs", {}, svg);
+    // Charts animate once, the first time they scroll into view.
+    if (!reduceMotion && container.dataset.anim === "go") {
+      svg.classList.add("anim");
+      container.dataset.anim = "done";
+    }
+    return svg;
+  }
+
+  let defId = 0;
+  function gradient(svg, colour) {
+    const id = `grad${++defId}`;
+    const g = el("linearGradient", { id, x1: 0, x2: 1, y1: 0, y2: 0 }, svg.querySelector("defs"));
+    el("stop", { offset: "0%", "stop-color": colour, "stop-opacity": 0.55 }, g);
+    el("stop", { offset: "100%", "stop-color": colour }, g);
+    return `url(#${id})`;
+  }
+
+  function glow(svg, colour) {
+    const id = `glow${++defId}`;
+    const f = el("filter", { id, x: "-20%", y: "-20%", width: "140%", height: "140%" }, svg.querySelector("defs"));
+    el("feDropShadow", { dx: 0, dy: 0, stdDeviation: 3.5, "flood-color": colour, "flood-opacity": 0.7 }, f);
+    return `url(#${id})`;
+  }
+
+  function drawIn(svg, path) {
+    if (!svg.classList.contains("anim")) return;
+    const len = path.getTotalLength ? path.getTotalLength() : 1000;
+    path.classList.add("draw");
+    path.style.setProperty("--len", len);
+    path.setAttribute("stroke-dasharray", len);
+  }
+
+  function countUp(node, delay = 0) {
+    const m = node.textContent.match(/^([\d.]+)(.*)$/);
+    if (!m || reduceMotion) return;
+    const target = parseFloat(m[1]), decimals = (m[1].split(".")[1] || "").length, rest = m[2];
+    const start = performance.now() + delay, dur = 1100;
+    node.textContent = `${(0).toFixed(decimals)}${rest}`;
+    const step = (now) => {
+      const k = Math.max(0, Math.min(1, (now - start) / dur)), e = 1 - Math.pow(1 - k, 3);
+      node.textContent = `${(target * e).toFixed(decimals)}${rest}`;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
 
   const scale = (d0, d1, r0, r1) => (v) => r0 + ((v - d0) / (d1 - d0 || 1)) * (r1 - r0);
@@ -233,8 +278,8 @@
         el("text", { x: labelW - 12, y: y + rowH / 2 + 1, "text-anchor": "end", "dominant-baseline": "middle", class: "lbl",
           "font-weight": r.name === PROPOSED ? 700 : 500 }, svg, r.name);
       }
-      const bar = el("rect", { x: x(0), y: y + 7, width: Math.max(x(r.MAE_mean) - x(0), 1), height: rowH - 14, rx: 4,
-        fill: modelColour(r.name) }, svg);
+      const bar = el("rect", { x: x(0), y: y + 7, width: Math.max(x(r.MAE_mean) - x(0), 1), height: rowH - 14, rx: 5,
+        fill: gradient(svg, modelColour(r.name)), class: "bar", style: `animation-delay:${i * 70}ms` }, svg);
       el("line", { x1: x(r.MAE_mean - r.MAE_std), x2: x(r.MAE_mean + r.MAE_std), y1: y + rowH / 2, y2: y + rowH / 2,
         stroke: css("--ink"), "stroke-width": 1.4, opacity: 0.55 }, svg);
       el("text", { x: x(r.MAE_mean + r.MAE_std) + 6, y: y + rowH / 2 + 1, "dominant-baseline": "middle", class: "val" }, svg,
@@ -271,8 +316,10 @@
       const colour = modelColour(name);
       const key = name === PROPOSED || name === REFERENCE || name === "Baseline";
       const pts = series[name].map((v, i) => `${x(i)},${y(v)}`).join(" ");
-      el("polyline", { points: pts, fill: "none", stroke: colour, "stroke-width": name === PROPOSED ? 3.5 : key ? 2 : 1.6,
-        "stroke-dasharray": key ? "" : "4 4", "stroke-linejoin": "round" }, svg);
+      const line = el("polyline", { points: pts, fill: "none", stroke: colour, "stroke-width": name === PROPOSED ? 3.5 : key ? 2 : 1.6,
+        "stroke-dasharray": key ? "" : "4 4", "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+      if (name === PROPOSED) line.setAttribute("filter", glow(svg, colour));
+      if (key) drawIn(svg, line);
       series[name].forEach((v, i) => {
         const dot = el("circle", { cx: x(i), cy: y(v), r: name === PROPOSED ? 5 : 3.5, fill: colour,
           stroke: css("--surface"), "stroke-width": 1.5 }, svg);
@@ -329,7 +376,8 @@
           el("text", { x: x(0) + 4, y: y + 11, fill: css("--ink-2"), "font-size": 12 }, svg, "needs a count target");
           return;
         }
-        const bar = el("rect", { x: x(0), y, width: Math.max(x(r.MAE) - x(0), 1), height: 14, rx: 3, fill: colour }, svg);
+        const bar = el("rect", { x: x(0), y, width: Math.max(x(r.MAE) - x(0), 1), height: 14, rx: 4,
+          fill: gradient(svg, colour), class: "bar", style: `animation-delay:${i * 80 + j * 40}ms` }, svg);
         el("text", { x: x(r.MAE) + 5, y: y + 11, class: "val", "font-size": 12 }, svg, fmt(r.MAE, 2));
         withTip(bar, `<b>${m}, predicting ${t === "Count" ? "the count" : "momentum"}</b><br>MAE ${fmt(r.MAE, 3)}, RMSE ${fmt(r.RMSE, 2)}<br>Top-10 MAE ${fmt(r.Top10, 2)}`);
       });
@@ -441,8 +489,9 @@
 
     el("polyline", { points: h.years.map((yr, i) => `${x(yr)},${y(h.gold[i])}`).join(" "), fill: "none",
       stroke: css("--gold"), "stroke-width": 2, "stroke-dasharray": "5 4" }, svg);
-    el("polyline", { points: years.map((yr, i) => `${x(yr)},${y(medals[i])}`).join(" "), fill: "none",
+    const medalLine = el("polyline", { points: years.map((yr, i) => `${x(yr)},${y(medals[i])}`).join(" "), fill: "none",
       stroke: ink, "stroke-width": 2.5, "stroke-linejoin": "round" }, svg);
+    drawIn(svg, medalLine);
     years.forEach((yr, i) => {
       const dot = el("circle", { cx: x(yr), cy: y(medals[i]), r: 3.5, fill: ink }, svg);
       const gold = i < h.gold.length ? `, ${h.gold[i]} gold` : "";
@@ -603,7 +652,58 @@
       return `<li class="${pos === rank ? "you" : ""}"><span class="rk">${pos + 1}</span><span>${dot}${r.country}</span><span>${fmt(r.medals, 1)}</span></li>`;
     }).join("");
 
+    renderPodium(board, rank);
+
     $("#p-foot").textContent = `forecast = (1 + ${Math.round(v.m1)}) × e^(${change >= 0 ? "" : "−"}${fmt(Math.abs(change), 3)}) − 1 = ${fmt(medals, 1)} medals. The ranking uses this browser model for all ${board.length} countries.`;
+  }
+
+  function renderPodium(board, rank) {
+    const slots = [[1, "pod--2"], [0, "pod--1"], [2, "pod--3"]];
+    $("#p-podium").innerHTML = slots.map(([i, cls]) => {
+      const r = board[i];
+      const you = r.country === pState.country;
+      return `<div class="pod ${cls}${you ? " you" : ""}">${you ? '<span class="you-tag">You</span>' : ""}
+        <span class="pod__name" title="${r.country}">${r.country}</span>
+        <span class="pod__val">${fmt(r.medals, 1)} medals</span><div class="pod__step">${i + 1}</div></div>`;
+    }).join("");
+
+    // Log scale, so climbing from #40 to #20 is as visible as #4 to #2.
+    const n = board.length;
+    const pos = 100 * (1 - Math.log(rank + 1) / Math.log(n));
+    const track = $("#p-rank");
+    if (!track.firstChild) {
+      track.innerHTML = `<div class="ranktrack__label"></div><div class="ranktrack__bar"></div><div class="ranktrack__dot"></div>
+        <div class="ranktrack__ends"><span>#${n}</span><span>#1</span></div>`;
+    }
+    track.querySelector(".ranktrack__dot").style.left = `${pos}%`;
+    const label = track.querySelector(".ranktrack__label");
+    label.style.left = `${Math.min(88, Math.max(12, pos))}%`;
+    label.textContent = `${pState.country}: #${rank + 1} of ${n}`;
+  }
+
+  /* ---------- first-view animations ---------- */
+  function setupAnimations() {
+    const oval = document.querySelector(".hero__oval");
+    if (reduceMotion) {
+      oval?.querySelectorAll("animateMotion").forEach((a) => a.remove());
+      oval?.querySelectorAll(".runner").forEach((c) => c.remove());
+      return;
+    }
+    document.querySelectorAll(".chip b [data-k], .chip b[data-k]").forEach((node, i) => countUp(node, 350 + i * 80));
+    if (!("IntersectionObserver" in window)) return;
+    const renderers = { bars: renderBars, lines: renderLines, families: renderFamilies, history: renderHistory };
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      if (e.target.id in renderers) {
+        e.target.dataset.anim = "go";
+        renderers[e.target.id]();
+      } else {
+        e.target.querySelectorAll(".num").forEach((node, i) => countUp(node, i * 120));
+      }
+    }), { threshold: 0.15 });
+    Object.keys(renderers).forEach((id) => io.observe($(`#${id}`)));
+    io.observe($("#findings"));
   }
 
   /* ---------- render ---------- */
@@ -623,6 +723,7 @@
   setupPicker();
   selectCountry(current);
   renderAll();
+  setupAnimations();
 
   let resizeTimer;
   let lastWidth = window.innerWidth;

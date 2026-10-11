@@ -78,13 +78,13 @@ svg use { fill: none; }
 
 .wrap { width: min(100% - 2rem, 780px); margin-inline: auto; }
 .wrap--wide { width: min(100% - 2rem, 1180px); }
-section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+section { padding-block: clamp(3.5rem, 8vw, 6rem); overflow-x: clip; }
 .band { background: var(--band); }
 .intro { color: var(--ink-2); margin: 0.6rem 0 0; }
 .muted { color: var(--ink-2); }
 
 /* Section heads with coloured icon badges ------------------------------- */
-.head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 2.25rem; }
+.head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 2.25rem; position: relative; isolation: isolate; }
 .head > div { min-width: 0; }
 .badge { flex: none; width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center; color: #fff; margin-top: 0.1rem; }
 .badge svg { width: 1.5rem; height: 1.5rem; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
@@ -169,8 +169,7 @@ section { padding-block: clamp(3.5rem, 8vw, 6rem); }
 .predictor { display: grid; gap: 1.5rem; }
 @media (min-width: 960px) { .predictor { grid-template-columns: 1fr 1.05fr; align-items: start; } }
 .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 20px; padding: clamp(1.1rem, 2.5vw, 1.75rem); min-width: 0; }
-.panel--result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.6rem); border-top: 6px solid var(--o-yellow); }
-@media (max-width: 959px) { .panel--result { position: static; } }
+.panel--result { border-top: 6px solid var(--o-yellow); }
 
 .picker { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-bottom: 0.9rem; }
 .picker label { font: 600 1.2rem/1 var(--display); }
@@ -304,3 +303,82 @@ tr.ours td:first-child { font-weight: 700; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* ===================== Polish layer ===================== */
+
+/* Big outlined words behind section titles */
+.head[data-bg]::before {
+  content: attr(data-bg); position: absolute; z-index: -1; left: -0.04em; top: -0.42em;
+  font: 700 clamp(5rem, 15vw, 11.5rem)/0.8 var(--display); letter-spacing: -0.01em;
+  color: transparent; -webkit-text-stroke: 1.5px var(--rule); white-space: nowrap; pointer-events: none;
+}
+.findings .head[data-bg]::before { -webkit-text-stroke-color: rgba(255,255,255,0.12); }
+
+/* Olympic-colour lane dividers */
+.lanes { display: grid; grid-template-columns: repeat(5, 1fr); height: 8px; }
+.lanes i:nth-child(1) { background: var(--o-blue); }
+.lanes i:nth-child(2) { background: var(--o-yellow); }
+.lanes i:nth-child(3) { background: var(--ink); }
+.lanes i:nth-child(4) { background: var(--o-green); }
+.lanes i:nth-child(5) { background: var(--o-red); }
+
+/* Dark "What we found" band */
+.findings { background: var(--night); color: var(--night-ink); }
+.findings h2 { color: #fff; }
+.findings .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-top: 6px solid; }
+.findings .card--blue { border-top-color: var(--o-blue); }
+.findings .card--yellow { border-top-color: var(--o-yellow); }
+.findings .card--green { border-top-color: var(--o-green); }
+.findings .card--red { border-top-color: var(--o-red); }
+.findings .card p { color: var(--night-ink-2); }
+.findings .num { color: #fff; }
+.card { transition: transform 200ms ease, box-shadow 200ms ease; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgba(0,0,0,0.6); }
+
+/* Hero: runners and one orchestrated entrance */
+.hero__oval .runner { filter: drop-shadow(0 0 6px currentColor); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.hero__course, .hero__title, .hero__lede, .hero__cta, .chip, .race { animation: rise 700ms cubic-bezier(.2,.7,.2,1) both; }
+.hero__title { animation-delay: 80ms; }
+.hero__lede { animation-delay: 180ms; }
+.hero__cta { animation-delay: 260ms; }
+.chip:nth-child(1) { animation-delay: 320ms; }
+.chip:nth-child(2) { animation-delay: 400ms; }
+.chip:nth-child(3) { animation-delay: 480ms; }
+.chip:nth-child(4) { animation-delay: 560ms; }
+.race { animation-delay: 620ms; }
+.btn { transition: transform 150ms ease, background 150ms ease, border-color 150ms ease; }
+.btn:hover { transform: translateY(-2px); }
+
+/* Charts: hover, glow, draw-in */
+.chart svg rect.bar { transition: filter 150ms ease; cursor: pointer; }
+.chart svg rect.bar:hover { filter: brightness(1.12) saturate(1.1); }
+.chart svg circle[tabindex] { cursor: pointer; transition: r 150ms ease; }
+svg.anim rect.bar { animation: grow 900ms cubic-bezier(.2,.7,.2,1) both; transform-box: fill-box; transform-origin: left center; }
+svg.anim .draw { animation: draw 1500ms ease-out both; }
+svg.anim circle { animation: pop 500ms ease-out both; animation-delay: 900ms; }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; } }
+
+/* Podium */
+.podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 0.5rem; margin: 0.4rem 0 1rem; min-height: 11.5rem; }
+.pod { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+.pod__name { font: 700 1.1rem/1.1 var(--display); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pod__val { font: 500 0.95rem/1.2 var(--display); color: var(--ink-2); margin-bottom: 0.35rem; font-variant-numeric: tabular-nums; }
+.pod__step { width: 100%; border-radius: 10px 10px 4px 4px; display: grid; place-items: start center; padding-top: 0.35rem;
+  font: 700 1.9rem/1 var(--display); color: rgba(0,0,0,0.55); transition: height 500ms cubic-bezier(.2,.7,.2,1); }
+.pod--1 .pod__step { height: 6.5rem; background: linear-gradient(180deg, #f3cf6f, var(--gold)); }
+.pod--2 .pod__step { height: 4.6rem; background: linear-gradient(180deg, #dfe4ec, var(--silver)); }
+.pod--3 .pod__step { height: 3.4rem; background: linear-gradient(180deg, #e3a978, var(--bronze)); }
+.pod.you .pod__name { color: var(--o-blue); }
+.pod.you .pod__step { box-shadow: 0 0 0 3px var(--o-yellow), 0 10px 25px -10px var(--o-yellow); }
+.you-tag { display: inline-block; font: 700 0.75rem/1 var(--display); background: var(--o-yellow); color: #2b1f04; border-radius: 999px; padding: 0.2rem 0.45rem; margin-bottom: 0.3rem; }
+
+/* Rank track: country climbs as the forecast improves */
+.ranktrack { position: relative; margin: 0.25rem 0 1.5rem; padding-top: 1.9rem; }
+.ranktrack__bar { height: 0.7rem; border-radius: 999px; background: linear-gradient(90deg, var(--band), var(--o-blue-soft) 40%, var(--o-yellow) 100%); }
+.ranktrack__dot { position: absolute; top: 1.55rem; width: 1.4rem; height: 1.4rem; margin-left: -0.7rem; border-radius: 50%;
+  background: var(--gold); border: 3px solid var(--surface); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.5); transition: left 500ms cubic-bezier(.2,.7,.2,1); }
+.ranktrack__label { position: absolute; top: 0; transform: translateX(-50%); font: 700 1rem/1 var(--display); white-space: nowrap; transition: left 500ms cubic-bezier(.2,.7,.2,1); }
+.ranktrack__ends { display: flex; justify-content: space-between; font: 500 0.9rem/1 var(--display); color: var(--ink-2); margin-top: 0.45rem; }
