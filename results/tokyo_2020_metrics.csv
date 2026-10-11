@@ -1,0 +1,7 @@
+model,MAE,RMSE,R2,Top10_MAE
+Baseline,1.8507,3.7696,0.9295,12.3318
+Historical Features,1.5655,3.3784,0.9434,11.6329
+Historical + Momentum Score,1.5565,3.3428,0.9446,11.3514
+Paper Two-Stage,1.5521,3.3992,0.9427,11.5807
+Momentum Target,1.5568,3.7227,0.9313,12.1337
+Momentum Target + Score,1.5586,3.7297,0.931,12.4516

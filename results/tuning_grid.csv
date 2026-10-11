@@ -1,0 +1,49 @@
+min_samples_leaf,max_features,model,validation_MAE
+1,0.6,Baseline,1.649
+1,0.6,Historical Features,1.4623
+1,0.6,Historical + Momentum Score,1.4866
+1,0.6,Paper Two-Stage,1.4248
+1,0.6,Momentum Target,1.2706
+1,0.6,Momentum Target + Score,1.3076
+1,1.0,Baseline,1.6364
+1,1.0,Historical Features,1.5065
+1,1.0,Historical + Momentum Score,1.5182
+1,1.0,Paper Two-Stage,1.4832
+1,1.0,Momentum Target,1.3234
+1,1.0,Momentum Target + Score,1.3221
+3,0.6,Baseline,1.3762
+3,0.6,Historical Features,1.4353
+3,0.6,Historical + Momentum Score,1.4479
+3,0.6,Paper Two-Stage,1.4451
+3,0.6,Momentum Target,1.282
+3,0.6,Momentum Target + Score,1.2847
+3,1.0,Baseline,1.4829
+3,1.0,Historical Features,1.5042
+3,1.0,Historical + Momentum Score,1.5174
+3,1.0,Paper Two-Stage,1.5239
+3,1.0,Momentum Target,1.332
+3,1.0,Momentum Target + Score,1.3262
+5,0.6,Baseline,1.3121
+5,0.6,Historical Features,1.4278
+5,0.6,Historical + Momentum Score,1.4308
+5,0.6,Paper Two-Stage,1.4048
+5,0.6,Momentum Target,1.2457
+5,0.6,Momentum Target + Score,1.2501
+5,1.0,Baseline,1.4303
+5,1.0,Historical Features,1.4816
+5,1.0,Historical + Momentum Score,1.4899
+5,1.0,Paper Two-Stage,1.4881
+5,1.0,Momentum Target,1.2956
+5,1.0,Momentum Target + Score,1.2859
+10,0.6,Baseline,1.245
+10,0.6,Historical Features,1.4106
+10,0.6,Historical + Momentum Score,1.4138
+10,0.6,Paper Two-Stage,1.3884
+10,0.6,Momentum Target,1.2353
+10,0.6,Momentum Target + Score,1.2486
+10,1.0,Baseline,1.3906
+10,1.0,Historical Features,1.4759
+10,1.0,Historical + Momentum Score,1.4995
+10,1.0,Paper Two-Stage,1.46
+10,1.0,Momentum Target,1.2662
+10,1.0,Momentum Target + Score,1.2779

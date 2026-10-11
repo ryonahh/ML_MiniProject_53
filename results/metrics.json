@@ -1,0 +1,210 @@
+{
+  "forest_params": {
+    "n_estimators": 300,
+    "min_samples_leaf": 10,
+    "max_features": 0.6
+  },
+  "split": {
+    "train_start": 1964,
+    "train_end": 2008,
+    "validation_year": 2012,
+    "test_year": 2016,
+    "forecast_year": 2020
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_2016": [
+    {
+      "model": "Baseline",
+      "MAE_mean": 1.6063,
+      "MAE_std": 0.0061,
+      "RMSE_mean": 3.8489,
+      "RMSE_std": 0.052,
+      "R2_mean": 0.9126,
+      "R2_std": 0.0024,
+      "Top10_MAE_mean": 12.2581,
+      "Top10_MAE_std": 0.185
+    },
+    {
+      "model": "Historical Features",
+      "MAE_mean": 1.4738,
+      "MAE_std": 0.0136,
+      "RMSE_mean": 3.762,
+      "RMSE_std": 0.0488,
+      "R2_mean": 0.9165,
+      "R2_std": 0.0022,
+      "Top10_MAE_mean": 11.9139,
+      "Top10_MAE_std": 0.2234
+    },
+    {
+      "model": "Historical + Momentum Score",
+      "MAE_mean": 1.501,
+      "MAE_std": 0.0185,
+      "RMSE_mean": 3.8134,
+      "RMSE_std": 0.0849,
+      "R2_mean": 0.9142,
+      "R2_std": 0.0038,
+      "Top10_MAE_mean": 12.2596,
+      "Top10_MAE_std": 0.3721
+    },
+    {
+      "model": "Paper Two-Stage",
+      "MAE_mean": 1.4896,
+      "MAE_std": 0.0183,
+      "RMSE_mean": 3.9243,
+      "RMSE_std": 0.0705,
+      "R2_mean": 0.9092,
+      "R2_std": 0.0033,
+      "Top10_MAE_mean": 12.2903,
+      "Top10_MAE_std": 0.2956
+    },
+    {
+      "model": "Momentum Target",
+      "MAE_mean": 1.2977,
+      "MAE_std": 0.0058,
+      "RMSE_mean": 3.3696,
+      "RMSE_std": 0.0231,
+      "R2_mean": 0.9331,
+      "R2_std": 0.0009,
+      "Top10_MAE_mean": 10.1433,
+      "Top10_MAE_std": 0.1062
+    },
+    {
+      "model": "Momentum Target + Score",
+      "MAE_mean": 1.2964,
+      "MAE_std": 0.0089,
+      "RMSE_mean": 3.3919,
+      "RMSE_std": 0.0258,
+      "R2_mean": 0.9322,
+      "R2_std": 0.001,
+      "Top10_MAE_mean": 10.1606,
+      "Top10_MAE_std": 0.1132
+    }
+  ],
+  "headline": {
+    "proposed_model": "Momentum Target",
+    "reference_model": "Historical Features",
+    "mae_reduction_vs_baseline_pct": 19.21,
+    "mae_reduction_vs_historical_pct": 11.95,
+    "rmse_reduction_vs_baseline_pct": 12.45,
+    "backtest_wins_vs_historical": 6,
+    "backtest_games": 6
+  },
+  "significance_2016": {
+    "observed": -0.1764,
+    "ci_low": -0.3382,
+    "ci_high": -0.0233,
+    "prob_a_better": 0.9905
+  },
+  "rolling_origin_mae": [
+    {
+      "model": "Baseline",
+      "1996": 2.0138,
+      "2000": 1.7242,
+      "2004": 1.4781,
+      "2008": 1.7017,
+      "2012": 1.2504,
+      "2016": 1.6063,
+      "Average": 1.6291
+    },
+    {
+      "model": "Historical Features",
+      "1996": 1.9197,
+      "2000": 1.6943,
+      "2004": 1.4419,
+      "2008": 1.6666,
+      "2012": 1.395,
+      "2016": 1.4738,
+      "Average": 1.5986
+    },
+    {
+      "model": "Historical + Momentum Score",
+      "1996": 1.9136,
+      "2000": 1.7105,
+      "2004": 1.4645,
+      "2008": 1.6873,
+      "2012": 1.431,
+      "2016": 1.501,
+      "Average": 1.618
+    },
+    {
+      "model": "Paper Two-Stage",
+      "1996": 1.8557,
+      "2000": 1.6279,
+      "2004": 1.3756,
+      "2008": 1.6295,
+      "2012": 1.3687,
+      "2016": 1.4896,
+      "Average": 1.5578
+    },
+    {
+      "model": "Momentum Target",
+      "1996": 1.825,
+      "2000": 1.3002,
+      "2004": 1.1107,
+      "2008": 1.4726,
+      "2012": 1.2377,
+      "2016": 1.2977,
+      "Average": 1.374
+    },
+    {
+      "model": "Momentum Target + Score",
+      "1996": 1.8472,
+      "2000": 1.3163,
+      "2004": 1.1302,
+      "2008": 1.4975,
+      "2012": 1.244,
+      "2016": 1.2964,
+      "Average": 1.3886
+    }
+  ],
+  "tokyo_2020": [
+    {
+      "model": "Baseline",
+      "MAE": 1.8507,
+      "RMSE": 3.7696,
+      "R2": 0.9295,
+      "Top10_MAE": 12.3318
+    },
+    {
+      "model": "Historical Features",
+      "MAE": 1.5655,
+      "RMSE": 3.3784,
+      "R2": 0.9434,
+      "Top10_MAE": 11.6329
+    },
+    {
+      "model": "Historical + Momentum Score",
+      "MAE": 1.5565,
+      "RMSE": 3.3428,
+      "R2": 0.9446,
+      "Top10_MAE": 11.3514
+    },
+    {
+      "model": "Paper Two-Stage",
+      "MAE": 1.5521,
+      "RMSE": 3.3992,
+      "R2": 0.9427,
+      "Top10_MAE": 11.5807
+    },
+    {
+      "model": "Momentum Target",
+      "MAE": 1.5568,
+      "RMSE": 3.7227,
+      "R2": 0.9313,
+      "Top10_MAE": 12.1337
+    },
+    {
+      "model": "Momentum Target + Score",
+      "MAE": 1.5586,
+      "RMSE": 3.7297,
+      "R2": 0.931,
+      "Top10_MAE": 12.4516
+    }
+  ]
+}
