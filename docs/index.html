@@ -72,6 +72,7 @@
         <li><h3>Clean the records</h3><p>271,116 athlete rows from Kaggle’s <em>120 years of Olympic history</em>. Summer Games only, with team medals counted once per event, as in the official tables.</p></li>
         <li><h3>One row per country per Games</h3><p>Athletes, sports, events and medals for 206 countries. Historical teams are merged, so West and East Germany count as Germany and the USSR as Russia.</p></li>
         <li><h3>Look back, never forward</h3><p>Nine lagged features: last Games’ medals and golds, team size, sports, events, medal and athlete growth, a three-Games rolling average, and medals per athlete.</p></li>
+        <li><h3>Add the World Bank</h3><p>The reference paper’s indicators: GDP, GDP per capita, GDP growth, population, population growth, land area, and shares of world GDP and population. Each comes from the year before the Games.</p></li>
         <li><h3>Learn momentum</h3><p>A Random Forest predicts the change in log medals since the last Games. The forecast is that change added back to last Games’ count.</p></li>
         <li><h3>Test on the future</h3><p>Tuned on London 2012, tested on Rio 2016, backtested on six Games, then used to forecast Tokyo 2020 and scored against the real medal table.</p></li>
       </ol>
@@ -90,7 +91,7 @@
           <div class="formula__eq">
             <span>forecast <span class="op">=</span></span><span>(1 + last Games’ medals) <span class="op">×</span></span><span>e<sup>momentum</sup> <span class="op">−</span> 1</span>
           </div>
-          <figcaption>The forest is trained on <i>log(1 + medals<sub>t</sub>) − log(1 + medals<sub>t−1</sub>)</i>. All six models use the same forest settings, so differences in error come from the features and target, not the tuning.</figcaption>
+          <figcaption>The forest is trained on <i>log(1 + medals<sub>t</sub>) − log(1 + medals<sub>t−1</sub>)</i>. All eight models use the same forest settings, so differences in error come from the features and target, not the tuning.</figcaption>
         </figure>
       </div>
     </div>
@@ -98,7 +99,7 @@
 
   <section id="results">
     <div class="wrap">
-      <h2>How the six models compare</h2>
+      <h2>How the eight models compare</h2>
       <p class="intro">Every model uses the same Random Forest (<span id="params"></span>), averaged over <span id="seeds"></span> random seeds. Lower error is better.</p>
     </div>
     <div class="wrap wrap--wide charts">
@@ -113,9 +114,26 @@
       </figure>
     </div>
     <div class="wrap">
+      <div class="zoo">
+        <h3>The paper’s models, re-run on our splits</h3>
+        <p>The reference paper compares many model types. We re-ran each one with history and World Bank features, once predicting the count and once predicting momentum. Each was tuned on 2012 and tested once on Rio 2016. Momentum lowers the error for four of the five types that can use it. Poisson regression needs a count target, so it has no momentum version.</p>
+      </div>
+    </div>
+    <div class="wrap wrap--wide charts">
+      <figure class="chart">
+        <figcaption><h3>Regressors: count vs momentum</h3><p>Rio 2016 MAE, medals per country.</p></figcaption>
+        <div id="families"></div>
+        <ul class="key"><li><span class="mk" style="background:var(--other)"></span>Predict the count</li><li><span class="mk mk--pred"></span>Predict momentum</li></ul>
+      </figure>
+      <figure class="chart">
+        <figcaption><h3>First stage: will a country win any medal?</h3><p>Accuracy of the paper’s classifiers, against a simple rule.</p></figcaption>
+        <div class="tablewrap"><table id="clf-table"></table></div>
+      </figure>
+    </div>
+    <div class="wrap">
       <div class="tokyo">
         <h3>The real future: Tokyo 2020</h3>
-        <p>The dataset stops at 2016, so these forecasts were made without any 2020 information and then scored against the actual medal table. Tokyo was postponed a year by COVID and hosted by Japan. Here every model that goes beyond last Games’ count finishes within 0.02 medals of the others. Our edge from earlier Games did not hold this time.</p>
+        <p>The dataset stops at 2016, so these forecasts were made without any 2020 information and then scored against the actual medal table. Tokyo was postponed a year by COVID and hosted by Japan. Here the models with World Bank data do best: the paper’s two-stage design has the lowest error, and the economic models are clearly better on the top ten nations. Predicting momentum, our winner on every earlier Games, falls back to the middle of the pack.</p>
         <div class="tablewrap"><table id="tokyo-table"></table></div>
       </div>
     </div>
@@ -150,8 +168,10 @@
       <h2>What didn’t work, and what’s left</h2>
       <ul class="notes">
         <li><h3>A momentum score as an extra feature</h3><p>We first combined medal growth, athlete growth and efficiency into one standardised score. Adding it to a forest that already has those three inputs made no difference (MAE <span data-k="scoreMae"></span> vs <span data-k="histMae"></span>). The idea only helped once momentum became the target.</p></li>
-        <li><h3>The paper’s two-stage model</h3><p>The reference paper first predicts medal or no medal, then how many. Rebuilt on our features it beats the plain count model, but it still trails predicting momentum in every backtest Games.</p></li>
-        <li><h3>Only Olympic history</h3><p>We use no GDP, population, funding or host-nation data. Shocks like a home Games (Japan won 58 in Tokyo) or a disrupted cycle are outside what the model can see.</p></li>
+        <li><h3>The paper’s two-stage model</h3><p>The reference paper first predicts medal or no medal, then how many. Rebuilt with its World Bank inputs, it beats the plain count model and wins on Tokyo 2020, but it trails predicting momentum in every backtest Games.</p></li>
+        <li><h3>SVR predicting the count</h3><p>In the model-family comparison, an RBF-kernel SVR predicting the count has the best RMSE and top-ten error on Rio 2016. Momentum did not help SVR. This is a single test year, so we report it but don’t read too much into it.</p></li>
+        <li><h3>World Bank data has gaps</h3><p>The World Bank has no figures for the Soviet Union, East Germany or Taiwan, so <span data-k="ecoMissing"></span> of country-Games rows have no economic data. On Rio 2016 the indicators barely change the error, because last Games’ medals already reflect a country’s wealth and size. They do help on Tokyo 2020 and on the top ten nations.</p></li>
+        <li><h3>Shocks the data can’t see</h3><p>Host-nation effects (Japan won 58 medals in Tokyo, up from 41), boycotts and a COVID-delayed Games are outside what any of these features describe.</p></li>
         <li><h3>Feature importance is not cause</h3><p>Last Games’ medals and medals per athlete dominate the importance ranking. That shows what the model relies on, not why countries win.</p></li>
       </ul>
     </div>

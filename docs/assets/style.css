@@ -142,6 +142,10 @@ section { padding-block: clamp(3.5rem, 8vw, 6rem); }
 .lbl { fill: var(--ink); font-size: 14px; font-weight: 500; }
 .val { fill: var(--ink); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* Model families ---------------------------------------------------------- */
+.zoo { margin-top: 3rem; margin-bottom: 1.5rem; }
+.chart table { min-width: 0; font-size: 1rem; }
+
 /* Tokyo table ------------------------------------------------------------- */
 .tokyo { margin-top: 3rem; }
 .tablewrap { overflow-x: auto; margin-top: 1rem; }

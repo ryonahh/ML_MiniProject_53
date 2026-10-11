@@ -182,6 +182,7 @@
       ci: `${fmt(-s.ci_high, 2)} to ${fmt(-s.ci_low, 2)}`,
       scoreMae: fmt(by["Historical + Momentum Score"].MAE_mean, 3),
       histMae: fmt(hist.MAE_mean, 3),
+      ecoMissing: `${fmt(100 * (1 - (D.economicCoverage ?? 1)), 0)}%`,
     };
     document.querySelectorAll("[data-k]").forEach((node) => { node.textContent = values[node.dataset.k]; });
     $("#params").textContent =
@@ -281,6 +282,50 @@
     } else {
       keyBox.querySelectorAll(".mk").forEach((mk, i) => { mk.style.background = modelColour(Object.keys(series)[i]); });
     }
+  }
+
+  /* ---------- results: model families (count vs momentum) ---------- */
+  function renderFamilies() {
+    const box = $("#families");
+    if (!D.families) { box.closest(".chart").hidden = true; return; }
+    const names = [...new Set(D.families.map((r) => r.model))];
+    const get = (m, t) => D.families.find((r) => r.model === m && r.target === t);
+    const W = Math.max(box.clientWidth, 300);
+    const narrow = W < 460;
+    const labelW = narrow ? 0 : 150, group = narrow ? 64 : 46, top = 4, bottom = 26;
+    const H = top + names.length * group + bottom;
+    const svg = svgFor(box, W, H);
+    const max = niceMax(Math.max(...D.families.map((r) => r.MAE)) * 1.08, 0.5);
+    const x = scale(0, max, labelW, W - 44);
+    for (let v = 0; v <= max + 1e-9; v += 0.5) {
+      el("line", { x1: x(v), x2: x(v), y1: top, y2: H - bottom, stroke: css("--rule") }, svg);
+      el("text", { x: x(v), y: H - 8, "text-anchor": "middle", fill: css("--ink-2"), "font-size": 13 }, svg, fmt(v, 1));
+    }
+    names.forEach((m, i) => {
+      const y0 = top + i * group + (narrow ? 18 : 0);
+      if (narrow) el("text", { x: 0, y: y0 - 4, class: "lbl" }, svg, m);
+      else el("text", { x: labelW - 12, y: y0 + 19, "text-anchor": "end", class: "lbl" }, svg, m);
+      [["Count", css("--other")], ["Momentum", css("--gold")]].forEach(([t, colour], j) => {
+        const r = get(m, t);
+        const y = y0 + 4 + j * 16;
+        if (!r) {
+          el("text", { x: x(0) + 4, y: y + 11, fill: css("--ink-2"), "font-size": 12 }, svg, "needs a count target");
+          return;
+        }
+        const bar = el("rect", { x: x(0), y, width: Math.max(x(r.MAE) - x(0), 1), height: 14, rx: 3, fill: colour }, svg);
+        el("text", { x: x(r.MAE) + 5, y: y + 11, class: "val", "font-size": 12 }, svg, fmt(r.MAE, 2));
+        withTip(bar, `<b>${m}, predicting ${t === "Count" ? "the count" : "momentum"}</b><br>MAE ${fmt(r.MAE, 3)}, RMSE ${fmt(r.RMSE, 2)}<br>Top-10 MAE ${fmt(r.Top10, 2)}`);
+      });
+    });
+  }
+
+  function renderClassifiers() {
+    const table = $("#clf-table");
+    if (!D.classifiers) { table.closest(".chart").hidden = true; return; }
+    const best = Math.max(...D.classifiers.map((r) => r.acc2016));
+    table.innerHTML = `<thead><tr><th scope="col">Classifier</th><th scope="col">2012</th><th scope="col">2016</th><th scope="col">F1 2016</th></tr></thead>
+      <tbody>${D.classifiers.map((r) => `<tr><td>${r.model}</td><td>${fmt(100 * r.acc2012, 1)}%</td>
+        <td class="${r.acc2016 === best ? "best" : ""}">${fmt(100 * r.acc2016, 1)}%</td><td>${fmt(r.f12016, 3)}</td></tr>`).join("")}</tbody>`;
   }
 
   /* ---------- Tokyo table ---------- */
@@ -409,11 +454,13 @@
     renderRace();
     renderBars();
     renderLines();
+    renderFamilies();
     renderHistory();
   }
 
   fillFindings();
   renderTokyo();
+  renderClassifiers();
   setupPicker();
   selectCountry(current);
   renderAll();
