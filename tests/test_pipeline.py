@@ -14,8 +14,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from olympic_momentum.config import MODEL_SPECS, ForestParams  # noqa: E402
+from olympic_momentum.config import ECONOMIC_FEATURES, MODEL_SPECS, ForestParams  # noqa: E402
 from olympic_momentum.data import aggregate_country_year  # noqa: E402
+from olympic_momentum.economic import add_economic_features  # noqa: E402
 from olympic_momentum.features import (  # noqa: E402
     PerformanceMomentum,
     add_forecast_rows,
@@ -91,9 +92,34 @@ def test_momentum_scaler_is_fitted_on_training_rows_only(table):
     assert scaler.transform(test)["Performance_Momentum"].notna().all()
 
 
+@pytest.fixture
+def world_bank() -> pd.DataFrame:
+    rows = []
+    for country, gdp in (("A", 1e12), ("B", 1e10)):
+        for year in range(1998, 2013):
+            rows.append(dict(Country=country, Year=year, GDP=gdp * (1 + (year - 1998) / 10),
+                             GDP_Per_Capita=gdp / 1e7, GDP_Growth=2.0, Population=1e7,
+                             Population_Growth=1.0, Land_Area=1e5))
+    return pd.DataFrame(rows)
+
+
+def test_economic_features_come_from_the_year_before(table, world_bank):
+    features = add_economic_features(build_temporal_features(table), world_bank).set_index(["Country", "Year"])
+    gdp_2003 = world_bank.query("Country == 'A' and Year == 2003")["GDP"].iloc[0]
+    assert features.loc[("A", 2004), "Log_GDP"] == pytest.approx(np.log(gdp_2003))
+    shares = features.xs(2004, level="Year")["World_Population_Share"]
+    assert shares.sum() == pytest.approx(100)
+
+
+def test_missing_economic_data_stays_missing(table):
+    features = add_economic_features(build_temporal_features(table), pd.DataFrame(
+        columns=["Country", "Year", "GDP", "GDP_Per_Capita", "GDP_Growth", "Population", "Population_Growth", "Land_Area"]))
+    assert features[ECONOMIC_FEATURES].isna().all().all()
+
+
 @pytest.mark.parametrize("spec", MODEL_SPECS, ids=lambda s: s.name)
-def test_every_model_fits_and_predicts_non_negative(table, spec):
-    features = build_temporal_features(table)
+def test_every_model_fits_and_predicts_non_negative(table, world_bank, spec):
+    features = add_economic_features(build_temporal_features(table), world_bank)
     model = MedalForecaster(spec, ForestParams(n_estimators=10, min_samples_leaf=1)).fit(
         features, features["Total_Medals"]
     )

@@ -14,6 +14,8 @@ SITE_DATA_PATH = PROJECT_ROOT / "docs" / "assets" / "data.js"
 
 ATHLETE_EVENTS_CSV = RAW_DIR / "athlete_events.csv"
 NOC_REGIONS_CSV = RAW_DIR / "noc_regions.csv"
+# Six World Bank indicators extracted by scripts/prepare_world_bank.py.
+WORLD_BANK_CSV = PROJECT_ROOT / "data" / "external" / "world_bank_indicators.csv"
 # Real Tokyo 2020 results, used only to score the 2020 forecast after the fact.
 TOKYO_ACTUALS_CSV = PROJECT_ROOT / "data" / "external" / "tokyo2020_medals.csv"
 DATA_SOURCE_URL = "https://raw.githubusercontent.com/rgriff23/Olympic_history/master/data"
@@ -35,6 +37,13 @@ HISTORICAL_FEATURES: list[str] = BASELINE_FEATURES + [
     "Rolling_3_Medal_Avg",
     "Medal_Efficiency",
 ]
+
+# World Bank indicators (the reference paper's socioeconomic inputs), from the year before the Games.
+ECONOMIC_FEATURES: list[str] = [
+    "Log_GDP", "Log_GDP_Per_Capita", "GDP_Growth", "Log_Population",
+    "Population_Growth", "Log_Land_Area", "World_GDP_Share", "World_Population_Share",
+]
+ECONOMIC_HISTORICAL_FEATURES: list[str] = HISTORICAL_FEATURES + ECONOMIC_FEATURES
 
 MOMENTUM_SCORE = "Performance_Momentum"
 MOMENTUM_FEATURES: list[str] = HISTORICAL_FEATURES + [MOMENTUM_SCORE]
@@ -77,8 +86,12 @@ MODEL_SPECS: tuple[ModelSpec, ...] = (
         description="Adds the composite Performance Momentum score as one more feature.",
     ),
     ModelSpec(
-        "Paper Two-Stage", tuple(HISTORICAL_FEATURES), learner="two_stage",
-        description="Reference-paper design: medal / no-medal classifier, then a regressor.",
+        "Historical + Economic", tuple(ECONOMIC_HISTORICAL_FEATURES),
+        description="Adds the paper's World Bank indicators (GDP, population, land area, shares).",
+    ),
+    ModelSpec(
+        "Paper Two-Stage", tuple(ECONOMIC_HISTORICAL_FEATURES), learner="two_stage",
+        description="Reference-paper design on its inputs: medal / no-medal classifier, then a regressor.",
     ),
     ModelSpec(
         "Momentum Target", tuple(HISTORICAL_FEATURES), target="momentum",
@@ -87,6 +100,10 @@ MODEL_SPECS: tuple[ModelSpec, ...] = (
     ModelSpec(
         "Momentum Target + Score", tuple(MOMENTUM_FEATURES), target="momentum",
         description="Proposed target with the momentum score added as a feature.",
+    ),
+    ModelSpec(
+        "Momentum Target + Economic", tuple(ECONOMIC_HISTORICAL_FEATURES), target="momentum",
+        description="Proposed target with the paper's World Bank indicators added.",
     ),
 )
 
